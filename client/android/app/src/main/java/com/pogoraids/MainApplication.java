@@ -1,4 +1,4 @@
-package com.client;
+package com.pogoraids;
 
 import android.app.Application;
 import android.util.Log;
