@@ -6,42 +6,21 @@ import cv2 as cv
 import color
 import re
 import numpy as np
+import logging
 
 from PIL import Image
 
 # TODO : adapt coordinates to scales
 # TODO : fazer thresholds para diferentes toms no current time
+# TODO : zoom in (cv.resize) parece ajudar em várias situacoes
 
-# coords = (315, 445, 385, 470)
-
-
-# img = cv.imread(sys.argv[1], 0)
-# ret, thresh1 = cv.threshold(img, 215, 255, cv.THRESH_BINARY)
-# # thresh1 = cv.adaptiveThreshold(
-# #   img,  255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 125, 1)
-
-# cv.imshow("threshold", thresh1)
-# text = pytesseract.image_to_string(thresh1)
-
-# print("Raw OCR")
-# print(text)
-
-
-# # Crop CP
-# coords = (84, 117, 353, 185)
-# # cropped_img_text = crop_image(thresh1, coords)
-
-# # print("Time until start: " + cropped_img_text)
-
-
-# cv.waitKey(0)
-# cv.destroyAllWindows()
+logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
 def percorrer_todas_raids():
-    total_raids = 30
+    total_raids = 5
 
-    for i in range(5, total_raids):
+    for i in range(1, total_raids):
         file_name = "raids/raid_" + str(i) + ".jpg"
         extract(file_name)
 
@@ -61,8 +40,12 @@ def extract(img_path):
     print("\n\n::::::::" + img_path + " :::::::: ")
     print("- Scale ("+str(w) + ","+str(h)+"): " + str(w/h))
 
-    # scan_for_time_until_start(img)
-    scan_for_current_time(img)
+    scan_for_time_until_start(img)
+    # scan_for_current_time(img)
+
+
+def say_hello(text):
+    print(text)
 
 
 def scan_for_current_time(img):
@@ -84,7 +67,7 @@ def scan_for_current_time(img):
     # thresh1 = cv.adaptiveThreshold(
     #     gray,  255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 155, -1)
 
-    cv.imshow("img", thresh)
+    # cv.imshow("img", thresh)
     # cv.waitKey(0)
     # cv.destroyAllWindows()
 
@@ -94,11 +77,14 @@ def scan_for_current_time(img):
     print("Current device time: {}".format(text))
 
     print("\n\nTeste Threshold")
-    try_multiple_thresholds(gray)
 
-
-def try_multiple_thresholds(gray_img):
     thresholds = [10, 25, 50, 100, 125, 150, 175, 200]
+    try_multiple_thresholds_ocr(gray, thresholds, regex_validate_hour_hh_mm)
+
+# Try_multiple_thresholds loops through thresholds until it finds the desired regex
+
+
+def try_multiple_thresholds_ocr(gray_img, thresholds, regex=()):
 
     for th in thresholds:
         print("Testing for thr {}".format(th))
@@ -114,21 +100,60 @@ def try_multiple_thresholds(gray_img):
         text = pytesseract.image_to_string(
             thresh, config='-c tessedit_char_whitelist=1234567890:~-AMP --psm 7')
 
-        regex = re.findall(r'\d{1,2}:\d{2}', text)
+        if regex(text):
+            return
 
-        print("REGEX: {}".format(regex))
 
-        if regex:
-            hour, minute = regex[0].split(":")
-            hour = int(hour)
-            minute = int(minute)
-            if hour > 0 and hour < 24 and minute > 0 and minute < 60:
-                print("Deu match - {}".format(text))
-                return text
-            else:
-                print("Falhou na procura de hora - {}".format(text))
+def regex_validate_hour_hh_mm(text):
+    regex = re.findall(r'\d{1,2}:\d{2}', text)
+
+    print("REGEX: {}".format(regex))
+
+    if regex:
+        hour, minute = regex[0].split(":")
+        hour = int(hour)
+        minute = int(minute)
+        if hour >= 0 and hour < 24 and minute >= 0 and minute < 60:
+            print("Deu match - {}".format(text))
+            return True
         else:
             print("Falhou na procura de hora - {}".format(text))
+    else:
+        print("Falhou na procura de hora - {}".format(text))
+
+    return False
+
+
+def regex_validate_hour_hh_mm_ss(text):
+    regex = re.findall(r'\d{1,2}:\d{2}:\d{2}', text)
+
+    print("REGEX: {}".format(regex))
+
+    if regex:
+        hour, minute, second = regex[0].split(":")
+        hour = int(hour)
+        minute = int(minute)
+        second = int(second)
+
+        if hour >= 0 and hour < 24 and minute >= 0 and minute < 60 and second >= 0 and second < 60:
+            print("Deu match - {}".format(text))
+            return True
+        else:
+            print("Falhou na procura de hora - {}".format(text))
+    else:
+        print("Falhou na procura de hora - {}".format(text))
+
+    return False
+
+
+def remove_noise(img):
+    filtered = cv.adaptiveThreshold(img.astype(
+        np.uint8), 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 9, 41)
+    kernel = np.ones((1, 1), np.uint8)
+    opening = cv.morphologyEx(filtered, cv.MORPH_OPEN, kernel)
+    closing = cv.morphologyEx(opening, cv.MORPH_CLOSE, kernel)
+    or_image = cv.bitwise_or(img, closing)
+    return or_image
 
 
 def apply_threshold(img):
@@ -214,7 +239,14 @@ def scan_for_time_until_start(img):
             # Binary conversion
             ret, thresh1 = cv.threshold(
                 gray, 200, 255, cv.THRESH_BINARY_INV)
+            thresh1 = cv.resize(thresh1, None, fx=2, fy=2,
+                                interpolation=cv.INTER_CUBIC)
             cv.imshow("threshold", thresh1)
+
+            thresholds = [180, 190, 200, 210, 215, 100, 125, 150, 175]
+            try_multiple_thresholds_ocr(
+                gray, thresholds, regex_validate_hour_hh_mm_ss)
+
             text = pytesseract.image_to_string(
                 thresh1, config='-c tessedit_char_whitelist=1234567890:~-AMP --psm 7')
 
@@ -253,6 +285,9 @@ def crop_image(img, coords, thresh_value):
 
 def main():
     percorrer_todas_raids()
+    logging.debug("This is a test")
+
+    cv.destroyAllWindows()
 
 
 main()
