@@ -5,10 +5,12 @@ import sys
 import cv2 as cv
 import color
 import re
+import numpy as np
 
 from PIL import Image
 
 # TODO : adapt coordinates to scales
+# TODO : fazer thresholds para diferentes toms no current time
 
 # coords = (315, 445, 385, 470)
 
@@ -39,7 +41,7 @@ from PIL import Image
 def percorrer_todas_raids():
     total_raids = 30
 
-    for i in range(3, total_raids):
+    for i in range(5, total_raids):
         file_name = "raids/raid_" + str(i) + ".jpg"
         extract(file_name)
 
@@ -59,7 +61,81 @@ def extract(img_path):
     print("\n\n::::::::" + img_path + " :::::::: ")
     print("- Scale ("+str(w) + ","+str(h)+"): " + str(w/h))
 
-    scan_for_time_until_start(img)
+    # scan_for_time_until_start(img)
+    scan_for_current_time(img)
+
+
+def scan_for_current_time(img):
+
+    # Verificar 7.8.9 - aparecem a branco
+    h, w, c = img.shape
+    cropped = img[0:45, 0:w]
+    gray = cv.cvtColor(cropped, cv.COLOR_BGR2GRAY)
+
+    ret, thresh = cv.threshold(gray, 50, 255, cv.THRESH_BINARY_INV)
+
+    # TODO : obter o delta e verificar que valores se recebe para tons de preto
+    cor_atual = img[25, int(w/2)]
+    preto = [0, 0, 0]
+    delta = color.diff_between_rgb_colors(cor_atual[::1], preto)
+
+    print("Cor atual {}, delta obtido {}".format(cor_atual, delta))
+
+    # thresh1 = cv.adaptiveThreshold(
+    #     gray,  255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 155, -1)
+
+    cv.imshow("img", thresh)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
+
+    text = pytesseract.image_to_string(
+        thresh, config='-c tessedit_char_whitelist=1234567890:~-AMP --psm 7')
+
+    print("Current device time: {}".format(text))
+
+    print("\n\nTeste Threshold")
+    try_multiple_thresholds(gray)
+
+
+def try_multiple_thresholds(gray_img):
+    thresholds = [10, 25, 50, 100, 125, 150, 175, 200]
+
+    for th in thresholds:
+        print("Testing for thr {}".format(th))
+        thresh = cv.resize(gray_img, None, fx=2, fy=2,
+                           interpolation=cv.INTER_CUBIC)
+
+        ret, thresh = cv.threshold(thresh, th, 255, cv.THRESH_BINARY_INV)
+
+        cv.imshow("img", thresh)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+
+        text = pytesseract.image_to_string(
+            thresh, config='-c tessedit_char_whitelist=1234567890:~-AMP --psm 7')
+
+        regex = re.findall(r'\d{1,2}:\d{2}', text)
+
+        print("REGEX: {}".format(regex))
+
+        if regex:
+            hour, minute = regex[0].split(":")
+            hour = int(hour)
+            minute = int(minute)
+            if hour > 0 and hour < 24 and minute > 0 and minute < 60:
+                print("Deu match - {}".format(text))
+                return text
+            else:
+                print("Falhou na procura de hora - {}".format(text))
+        else:
+            print("Falhou na procura de hora - {}".format(text))
+
+
+def apply_threshold(img):
+
+    h, w, c = img.shape
+    color = img[1:1]
+    print("Color no pixel {} e channel {}".format(color))
 
 
 def scan_for_time_until_start(img):
@@ -154,7 +230,7 @@ def scan_for_time_until_start(img):
             break
 
         # TODO : WARNING img[y,x] returns BGR instead of RGB
-        if color.similarity(img[y, x][::-1], orange):
+        if color.arbitrary_similarity(img[y, x][::-1], orange, 20):
 
             count_orange_pixels += 1
             # print("Color similar, total {}".format(count_orange_pixels))

@@ -83,20 +83,27 @@ def delta_e(color_lab_1, color_lab_2):
     return delta_E
 
 
-def similarity(color1, color2):
-
+def diff_between_rgb_colors(color1, color2):
     XYZ_1 = rgb_to_xyz(color1)
     LAB_1 = xyz_to_lab(XYZ_1)
 
     XYZ_2 = rgb_to_xyz(color2)
     LAB_2 = xyz_to_lab(XYZ_2)
 
-    delta = delta_e(LAB_1, LAB_2)
-    # print("Delta_E {}".format(delta))
-    # > 25 não é semelhante
-    if delta < 20:
+    return delta_e(LAB_1, LAB_2)
+
+
+def arbitrary_similarity(color1, color2, val):
+
+    delta = diff_between_rgb_colors(color1, color2)
+
+    # > 20/25 não é semelhante
+    if delta < val:
         return True
     return False
+
+
+# def black_similarity(color):
 
 
 def tests():
