@@ -1,53 +1,26 @@
-import React, { Fragment } from 'react'
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar } from 'react-native'
+import React, { Component } from 'react'
+import { AppRegistry, Text, TextInput, View } from 'react-native'
 
-import { Header, LearnMoreLinks, Colors, DebugInstructions, ReloadInstructions } from 'react-native/Libraries/NewAppScreen'
+export default class PizzaTranslator extends Component {
+	constructor(props) {
+		super(props)
+		this.state = { text: '' }
+	}
 
-const App = () => {
-	return (
-		<Fragment>
-			<StatusBar barStyle='dark-content' />
-		</Fragment>
-	)
+	render() {
+		return (
+			<View style={{ padding: 10 }}>
+				<TextInput style={{ height: 40 }} placeholder='Type here to translate!' onChangeText={(text) => this.setState({ text })} value={this.state.text} />
+				<Text style={{ padding: 10, fontSize: 42 }}>
+					{this.state.text
+						.split(' ')
+						.map((word) => word && '🍕')
+						.join(' ')}
+				</Text>
+			</View>
+		)
+	}
 }
 
-const styles = StyleSheet.create({
-	scrollView: {
-		backgroundColor: Colors.lighter
-	},
-	engine: {
-		position: 'absolute',
-		right: 0
-	},
-	body: {
-		backgroundColor: Colors.white
-	},
-	sectionContainer: {
-		marginTop: 32,
-		paddingHorizontal: 24
-	},
-	sectionTitle: {
-		fontSize: 24,
-		fontWeight: '600',
-		color: Colors.black
-	},
-	sectionDescription: {
-		marginTop: 8,
-		fontSize: 18,
-		fontWeight: '400',
-		color: Colors.dark
-	},
-	highlight: {
-		fontWeight: '700'
-	},
-	footer: {
-		color: Colors.dark,
-		fontSize: 12,
-		fontWeight: '600',
-		padding: 4,
-		paddingRight: 12,
-		textAlign: 'right'
-	}
-})
-
-export default App
+// skip this line if using Create React Native App
+AppRegistry.registerComponent('AwesomeProject', () => PizzaTranslator)
