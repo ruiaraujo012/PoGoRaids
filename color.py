@@ -84,13 +84,39 @@ def delta_e(color_lab_1, color_lab_2):
 
 
 def similarity(color1, color2):
+
     XYZ_1 = rgb_to_xyz(color1)
     LAB_1 = xyz_to_lab(XYZ_1)
 
     XYZ_2 = rgb_to_xyz(color2)
     LAB_2 = xyz_to_lab(XYZ_2)
 
-    return delta_e(LAB_1, LAB_2)
+    delta = delta_e(LAB_1, LAB_2)
+    # print("Delta_E {}".format(delta))
+    # > 25 não é semelhante
+    if delta < 20:
+        return True
+    return False
 
 
-print(similarity([200, 100, 100], [100, 100, 100]))
+def tests():
+    c1 = [238, 123, 70]
+    c2 = [253, 115, 55]
+    c3 = [239, 131, 86]
+    c4 = [247, 125, 53]
+    c5 = [245, 123, 61]
+    c6 = [244, 219, 210]
+    c7 = [235, 199, 79]
+    c8 = [235, 110, 79]
+
+    print(similarity(c1, c2))
+    print(similarity(c1, c3))
+    print(similarity(c1, c4))
+    print(similarity(c1, c5))
+    print("\n\n")
+    print(similarity(c2, c3))
+    print(similarity(c3, c4))
+    print(similarity(c4, c5))
+    print(similarity(c1, c6))
+    print(similarity(c1, c7))
+    print(similarity(c1, c8))
