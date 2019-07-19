@@ -97,14 +97,11 @@ def threshold_binary_inv(gray_img, thresh_val, regex=()):
     ret, thresh = cv.threshold(
         gray_img, thresh_val, 255, cv.THRESH_BINARY_INV)
 
-    cv.imshow("img", thresh)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    # cv.imshow("img", thresh)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
 
     text = ocr_numbers_single_row(thresh)
-
-    print("Regex function")
-    print(regex)
     extracted_text = regex(text)
 
     if extracted_text:

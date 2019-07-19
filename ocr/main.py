@@ -43,12 +43,12 @@ def extract(img_path):
     print("\n\n::::::::" + img_path + " :::::::: ")
     print("- Scale ("+str(w) + ","+str(h)+"): " + str(w/h))
 
-    # phone_time = scan_for_current_time(img)
+    phone_time = scan_for_current_time(img)
     time_until_start = scan_for_time_until_start(img)
 
-    print("\n\n========= Extracted data =========")
-    # print("Phone time:       {}".format(phone_time))
+    print("Phone time:       {}".format(phone_time))
     print("Time until start: {}".format(time_until_start))
+    print("\n\n\n")
 
 
 def scan_for_current_time(img):
@@ -73,10 +73,15 @@ def scan_for_current_time(img):
 def scan_for_time_until_start(img):
 
     orange = [243, 121, 53]
-    time_until_start = img_process.section_by_color(img, orange,  [0.5, 0.65], [0.9, 0.9], 33, 0, [
+    time_until_start = img_process.section_by_color(img, orange,  [0.5, 0.65], [0.8, 0.99], 33, 0, [
     ], regex=text_validation.validate_hour_hh_mm_ss)
 
-    # if not time_until_start:
+    if not time_until_start:
+        print("Testing rosa")
+        pink = [243, 136, 142]
+        time_until_start = img_process.section_by_color(img, pink,  [0.2, 0.2], [0.5, 0.85], 45, 0, [
+        ], pixels_quantity=150, regex=text_validation.validate_hour_hh_mm_ss)
+
     # Testar para o ROSA antes do hatch
 
     return time_until_start
