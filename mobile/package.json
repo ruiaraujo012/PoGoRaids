@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
+    "ra": "react-native run-android",
+    "ri": "react-native run-ios",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -12,6 +14,7 @@
     "prop-types": "^15.7.2",
     "react": "16.8.6",
     "react-native": "0.60.4",
+    "react-native-device-info": "^2.2.2",
     "react-native-gesture-handler": "^1.3.0",
     "react-navigation": "^3.11.1",
     "reactotron-react-native": "^3.6.4",
