@@ -27,7 +27,7 @@ logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
 def percorrer_todas_raids():
-    total_raids = 35
+    total_raids = 30
 
     for i in range(1, total_raids):
         img_path = "raids/raid_" + str(i) + ".jpg"
@@ -37,7 +37,29 @@ def percorrer_todas_raids():
         img = cv.imread(img_path)
         # img_to_boxes(img)
         # extract_level(img)
-        detect_circles(img)
+        coords = detect_circles(img)
+
+        if not coords:
+            continue
+
+        w, h, c = img.shape
+
+        print("Coords {}".format(coords))
+
+        img = img[coords[0]-coords[2]:coords[0] +
+                  coords[2], coords[1]+coords[2]:w]
+
+        img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
+        ret, img = cv.threshold(img,
+                                205, 255, cv.THRESH_BINARY_INV)
+
+        text = pytesseract.image_to_string(
+            img, config='--psm 6')
+
+        print("Extracted text {}".format(text))
+
+        cv.imshow("img", img)
+        cv.waitKey(0)
 
 
 def detect_circles(img):
@@ -49,11 +71,14 @@ def detect_circles(img):
     circles = cv.HoughCircles(gray, cv.HOUGH_GRADIENT,
                               2, 150,  minRadius=25, maxRadius=100)
 
+    image_circle = None
     # ensure at least some circles were found
     if circles is not None:
         # convert the (x, y) coordinates and radius of the circles to integers
         circles = np.round(circles[0, :]).astype("int")
 
+        min_x = 9999
+        min_y = 9999
         # loop over the (x, y) coordinates and radius of the circles
         for (x, y, r) in circles:
             # draw the circle in the output image, then draw a rectangle
@@ -62,9 +87,16 @@ def detect_circles(img):
             cv.rectangle(output, (x - 5, y - 5),
                          (x + 5, y + 5), (0, 128, 255), -1)
 
+            if x < min_x and y < min_y:
+                min_x = x
+                min_y = y
+                image_circle = (min_y, min_x, r)
+
         # show the output image
         cv.imshow("output", np.hstack([img, output]))
         cv.waitKey(0)
+
+    return image_circle
 
 
 def ex2(img_path):
