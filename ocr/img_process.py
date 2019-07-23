@@ -16,6 +16,11 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
     count_pixels = 0
     h, w, c = img.shape
 
+    vscale = h/960
+    hscale = w/500
+
+    print("Block heigh {}".format(block_height))
+
     # y,x
     init_x = int(w * start[1])
     init_y = int(h * start[0])
@@ -47,8 +52,8 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
         else:
             count_pixels = 0
 
-        if count_pixels > pixels_quantity:
-            cut_img = cut_block(img, found_pixels)
+        if count_pixels > int(pixels_quantity * hscale):
+            cut_img = cut_block(img, found_pixels, int(block_height * vscale))
             gray = cv.cvtColor(cut_img, cv.COLOR_BGR2GRAY)
             zoomed = zoom_img(gray, 2, 2)
             text = ''
@@ -66,7 +71,7 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
             break
 
 
-def cut_block(img, found_pixels):
+def cut_block(img, found_pixels, block_height):
     min_x = 9999
     max_x = -1
     section_max_height = 9999
@@ -85,7 +90,7 @@ def cut_block(img, found_pixels):
     # print("Encontrou um bloco de cor com inicio em x.{} y.{}".format(
     #     sec_x, sec_y))
 
-    return img[sec_y:sec_y+33, sec_x:sec_x+box_width]
+    return img[sec_y:sec_y+block_height, sec_x:sec_x+box_width]
 
 
 def zoom_img(img, fx, fy):
@@ -97,9 +102,9 @@ def threshold_binary_inv(gray_img, thresh_val, regex=()):
     ret, thresh = cv.threshold(
         gray_img, thresh_val, 255, cv.THRESH_BINARY_INV)
 
-    # cv.imshow("img", thresh)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+    cv.imshow("img", thresh)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
     text = ocr_numbers_single_row(thresh)
     extracted_text = regex(text)
@@ -110,17 +115,40 @@ def threshold_binary_inv(gray_img, thresh_val, regex=()):
     return None
 
 
+def try_multiple_thresholds_pokemon_name(gray_img, thresholds):
+
+    for th in thresholds:
+        print("Testing for thr {}".format(th))
+        ret, thresh = cv.threshold(gray_img, th, 255, cv.THRESH_BINARY_INV)
+
+        kernel = np.ones((5, 4), np.uint8)
+        img_erode = cv.erode(thresh, kernel, iterations=1)
+
+        cv.imshow("img", img_erode)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+
+        text = pytesseract.image_to_string(
+            thresh)  # config='--psm 12'
+
+        print("Pokemon name {}".format(text))
+
+    return None
+
+
 def try_multiple_thresholds_ocr(gray_img, thresholds, regex=()):
 
     for th in thresholds:
         # print("Testing for thr {}".format(th))
         ret, thresh = cv.threshold(gray_img, th, 255, cv.THRESH_BINARY_INV)
-        # cv.imshow("img", thresh)
-        # cv.waitKey(0)
-        # cv.destroyAllWindows()
+        cv.imshow("img", thresh)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
 
         text = ocr_numbers_single_row(thresh)
-        extracted_text = regex(text)
+
+        if not regex == ():
+            extracted_text = regex(text)
 
         if extracted_text:
             return extracted_text
