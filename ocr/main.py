@@ -27,7 +27,7 @@ logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
 def percorrer_todas_raids():
-    total_raids = 30
+    total_raids = 35
 
     for i in range(1, total_raids):
         img_path = "raids/raid_" + str(i) + ".jpg"
@@ -36,7 +36,7 @@ def percorrer_todas_raids():
         # captch_ex(img_path)
         img = cv.imread(img_path)
         # img_to_boxes(img)
-        # extract_level(img)
+        ex2(img_path)
         coords = detect_circles(img)
 
         if not coords:
@@ -93,24 +93,58 @@ def detect_circles(img):
                 image_circle = (min_y, min_x, r)
 
         # show the output image
-        cv.imshow("output", np.hstack([img, output]))
-        cv.waitKey(0)
+        # cv.imshow("output", np.hstack([img, output]))
+        # cv.waitKey(0)
 
     return image_circle
 
 
 def ex2(img_path):
     img_rgb = cv.imread(img_path)
+
+    # img_rgb = cv.imrad('image.png')
     img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
-    template = cv.imread('raid_icon_2.png', 0)
-    w, h = template.shape[::-1]
-    res = cv.matchTemplate(img_gray, template, cv.TM_CCOEFF_NORMED)
-    threshold = 0.75
-    loc = np.where(res >= threshold)
-    for pt in zip(*loc[::-1]):
-        cv.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-    cv.imshow('res.png', img_rgb)
-    cv.waitKey(0)
+    template = cv.imread('raid_icon_cut_2.png', 0)
+    template = cv.resize(template, None, fx=0.25,
+                         fy=0.25, interpolation=cv.INTER_CUBIC)
+
+    loc = [[]]
+    level = 0
+    while(True):
+        w, h = template.shape[::-1]
+
+        if w < 25 and h < 25:
+            break
+
+        print(w, h)
+        # TODO: analizar os elemtnos q se sobrepoem
+
+        # TM_CCOEFF_NORMED
+        res = cv.matchTemplate(img_gray, template, cv.TM_CCOEFF_NORMED)
+        threshold = 0.65
+        loc = np.where(res >= threshold)
+
+        print(loc)
+        x_dist = 0
+        for pt in zip(*loc[::-1]):
+            cv.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+
+            # cv.imshow('res.png', img_rgb)
+
+        for (index, point) in enumerate(loc[1][:-1]):
+            diff = abs(loc[1][index + 1] - point)
+            if diff > w:
+                level += 1
+
+        if(len(loc[0]) > 0):
+
+            cv.imshow("output", img_rgb)
+            cv.imshow("output2", template)
+            cv.waitKey(0)
+            print("Level {}".format(level))
+
+        template = cv.resize(template, None, fx=0.98,
+                             fy=0.98, interpolation=cv.INTER_CUBIC)
 
 
 def extract_level(img):
