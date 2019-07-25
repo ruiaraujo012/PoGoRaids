@@ -6,6 +6,7 @@ import cv2 as cv
 from matplotlib import pyplot as plt
 import pytesseract
 import img_process
+import color as co
 
 # parser = argparse.ArgumentParser(description='Name of screenshot.')
 # parser.add_argument('--num', type=int, default=1,
@@ -23,8 +24,30 @@ for i in range(1, total_raids):
     img = cv.imread(img_path)
 
     h, w, c = img.shape
+    print("Prev size {} {}".format(h, w))
+    color = img[h-1, 0]
 
-    print('Resolution size: {} x {}'.format(h, w))
+    # TODO : adicionar o laranja da poupança de bateria
+    if co.diff_between_rgb_colors(color, [0, 0, 0]) < 5 or co.diff_between_rgb_colors(color, [255, 255, 255]) < 5:
+        pixel_cut = 0
+        while(co.diff_between_rgb_colors(color, img[h-1, 0]) < 3):
+            pixel_cut += 1
+            h -= 1
+            print("{} {}".format(
+                h, co.diff_between_rgb_colors(color, img[h, 0])))
+
+        cv.imshow("prev image", img)
+        cv.waitKey(0)
+
+        if pixel_cut > 25:
+            img = img[0:h, 0:w]
+            print("New size {} {}".format(h, w))
+            cv.imshow("new image", img)
+            cv.waitKey(0)
+
+        h, w, c = img.shape
+
+        print('Resolution size: {} x {}'.format(h, w))
 
     width = 900
     crop_img = img[0:int(h/3*2), 0:w]
