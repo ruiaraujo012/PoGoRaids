@@ -12,9 +12,7 @@ for i in range(0, TOTAL_RAIDS):
 
     # FIXME: remover barra superior, falham as imagens 6 e 41.
 
-    img_path = pri.read_image_pokemon(i)
-
-    img = cv.imread(img_path)
+    img = pri.read_image_pokemon(i)
 
     new_img = pri.remove_bottom_bar(img)
 
