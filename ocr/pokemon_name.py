@@ -9,7 +9,6 @@ from utils import process_img as pri
 TOTAL_RAIDS = 54
 
 for i in range(0, TOTAL_RAIDS):
-
     # FIXME: remover barra superior, falham as imagens 6 e 41.
 
     img = pri.read_image_pokemon(i)
@@ -31,6 +30,6 @@ for i in range(0, TOTAL_RAIDS):
 
     print('Text found: {}'.format(text))
 
-    cv.imshow("raids/raid_" + str(i) + ".jpg", thresh)
+    cv.imshow("raid_" + str(i) + ".jpg", thresh)
     cv.waitKey(0)
     cv.destroyAllWindows()

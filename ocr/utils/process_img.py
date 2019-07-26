@@ -33,16 +33,16 @@ def crop_pokemon_name(img):
 
 def get_threshold(img, thresh_val=240, which=False):
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    gray = cv.GaussianBlur(gray, (3, 3), cv.BORDER_DEFAULT)
 
     ret, thresh = cv.threshold(
         gray, thresh_val, 255, cv.THRESH_BINARY_INV)
 
-    kernel = cv.getStructuringElement(cv.MORPH_RECT, (4, 8))
-    morph_img = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
-
     if which:
         return thresh
     else:
+        kernel = cv.getStructuringElement(cv.MORPH_RECT, (4, 8))
+        morph_img = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
         return morph_img
 
 
