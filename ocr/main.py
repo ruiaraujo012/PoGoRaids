@@ -35,9 +35,7 @@ def percorrer_todas_raids():
         img_path = "raids/pokemon/" + str(i) + ".jpg"
         name = str(i) + "_"
         # extract(img_path, name)
-        # captch_ex(img_path)
         img = cv.imread(img_path)
-        # img_to_boxes(img)
         extract_level(img_path)
         coords = detect_circles(img)
 
@@ -154,17 +152,6 @@ def extract(img_path, name):
     h, w, c = img.shape
 
     print("\n\n::::::::" + img_path + " :::::::: ")
-    # print("- Scale ({},{}): ".format(str(w), str(h), str(w/h)))
-
-    # cut = section_cut(img, name)
-
-    # pre_process_image_2(img, name)
-
-    # f = cv.createBackgroundSubtractorKNN()
-    # mask = f.apply(img)
-
-    # cv.imshow("mask", mask)
-    # cv.waitKey(0)
 
     phone_time = scan_for_current_time(img)
     time_until_start, did_egg_hatch = scan_for_time_until_start(img)
@@ -174,114 +161,6 @@ def extract(img_path, name):
     print("Phone time: {}".format(phone_time))
     print("Time until start: {}".format(time_until_start))
     print("\n\n\n")
-
-
-def img_to_boxes(img):
-    img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
-    d = pytesseract.image_to_data(img, output_type=Output.DICT)
-
-    print(pytesseract.image_to_boxes(img))
-
-    n_boxes = len(d['level'])
-    for i in range(n_boxes):
-        (x, y, w, h) = (d['left'][i], d['top']
-                        [i], d['width'][i], d['height'][i])
-    print("PRINTING")
-    cv.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    cv.imshow('img', img)
-    cv.waitKey(0)
-
-
-def captch_ex(file_name):
-    img = cv.imread(file_name)
-
-    img_final = cv.imread(file_name)
-    img_final = img_process.zoom_img(img_final, 2, 2)
-    img = img_process.zoom_img(img, 2, 2)
-    img2gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    ret, mask = cv.threshold(img2gray, 215, 255, cv.THRESH_BINARY)
-    cv.imshow("mask", mask)
-    cv.waitKey(0)
-    image_final = cv.bitwise_and(img2gray, img2gray, mask=mask)
-    # for black text , cv.THRESH_BINARY_INV
-    ret, new_img = cv.threshold(image_final, 180, 255, cv.THRESH_BINARY)
-    '''
-            line  8 to 12  : Remove noisy portion
-    '''
-    kernel = cv.getStructuringElement(cv.MORPH_CROSS, (3,
-                                                       3))  # to manipulate the orientation of dilution , large x means horizonatally dilating  more, large y means vertically dilating more
-    # dilate , more the iteration more the dilation
-    dilated = cv.dilate(new_img, kernel, iterations=9)
-
-    # for cv2.x.x
-
-    # findContours returns 3 variables for getting contours
-    contours, hierarchy = cv.findContours(
-        dilated, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
-
-    # for cv3.x.x comment above line and uncomment line below
-
-    #image, contours, hierarchy = cv2.findContours(dilated,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
-
-    for contour in contours:
-        # get rectangle bounding contour
-        [x, y, w, h] = cv.boundingRect(contour)
-
-        # Don't plot small false positives that aren't text
-        if w < 15 and h < 15:
-            continue
-
-        # draw rectangle around contour on original image
-        cv.rectangle(img, (x, y), (x + w, y + h), (255, 0, 255), 2)
-
-        '''
-        #you can crop image and send to OCR  , false detected will return no text :)
-        cropped = img_final[y :y +  h , x : x + w]
-
-        s = file_name + '/crop_' + str(index) + '.jpg'
-        cv2.imwrite(s , cropped)
-        index = index + 1
-
-        '''
-    # write original image with added contours to disk
-    cv.imshow('captcha_result', img)
-    cv.waitKey()
-
-    cv.imwrite("cp_"+file_name, img)
-
-    cv.imwrite('captcha.jpg', img)
-
-
-def pre_process_image_2(img, name):
-    gray = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
-    cv.imshow("img", img)
-    cv.waitKey(0)
-
-    ret, thresh = cv.threshold(gray, 215, 255, cv.THRESH_BINARY)
-    cv.imshow("gray", thresh)
-    cv.waitKey(0)
-
-    h, w, _ = img.shape
-    asd = 0
-    cinza = 170
-    dentro = False
-    # for x in range(w):
-    #     for y in range(h):
-    #         if gray[y, x] > 235:
-    #             # print([gray[y, x]])
-    #             gray[y, x] = 0
-    #         asd += 1
-    #         something = img[y, x]
-
-    print(gray[400, 100])
-    print(gray[415, 380])
-    print("Cinza {}".format(gray[400, 366]))
-    cv.imshow("img", gray)
-    cv.waitKey(0)
-
-    print(asd)
-    cv.imwrite("gray.jpg", gray)
-    # print(gray[y, x])
 
 
 def section_cut(img, name):
@@ -325,40 +204,6 @@ def section_cut(img, name):
     cv.imwrite("{}_{}.jpg".format(name, "pokemon"), pokemon)
     cv.imwrite("{}_{}.jpg".format(
         name, "timer_after_hatch"), timer_after_hatch)
-
-
-def pre_process_image(img):
-    h, w, c = img.shape
-    max_y = 0
-
-    moda = []
-    coords = None
-    for x in range(0, 1):
-        contiguous_pixels = 0
-        for y in range(0, 55):
-
-            similarity_black = color.diff_between_rgb_colors(
-                img[y, x][::-1], [0, 0, 0])
-            similarity_white = color.diff_between_rgb_colors(
-                img[y, x][::-1], [255, 255, 255])
-
-            print("({}, {}) - Color: {} , bl {} , wh {}".format(x,
-                                                                y, img[y, x], similarity_black, similarity_white))
-
-            # if similarity_white < 22 or similarity_black < 22:
-            #     moda.append(y)
-            #     if y > max_y:
-            #         max_y = y
-            #         contiguous_pixels += 1
-            #         coords = (x, y)
-
-    # print("Moda : {}".format(statistics.mean(moda)))
-    # print("Nas coordenadas {}".format(coords))
-    # print("Topbar Size: {}".format(max_y))
-    # cropped = img[0:int(statistics.mean(moda)), 0:w]
-    cv.imshow("img", img)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
 
 
 def scan_for_pokemon_name(img):
@@ -415,8 +260,6 @@ def main():
     raid_level = 5
     pn.find_boss_name_from_screenshot(screenshot_name, raid_level)
     percorrer_todas_raids()
-    # captch_ex()
-    # cv.destroyAllWindows()
 
 
 main()
