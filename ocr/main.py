@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+
 import pytesseract
 from pytesseract import Output
 import sys
@@ -11,6 +12,7 @@ import math
 import logging
 import text_validation
 import img_process
+import pokemon_name as pn
 import statistics
 import imutils
 from matplotlib import pyplot as plt
@@ -30,7 +32,7 @@ def percorrer_todas_raids():
     total_raids = 35
 
     for i in range(1, total_raids):
-        img_path = "raids/raid_" + str(i) + ".jpg"
+        img_path = "raids/pokemon/" + str(i) + ".jpg"
         name = str(i) + "_"
         # extract(img_path, name)
         # captch_ex(img_path)
@@ -235,7 +237,7 @@ def captch_ex(file_name):
     # for black text , cv.THRESH_BINARY_INV
     ret, new_img = cv.threshold(image_final, 180, 255, cv.THRESH_BINARY)
     '''
-            line  8 to 12  : Remove noisy portion 
+            line  8 to 12  : Remove noisy portion
     '''
     kernel = cv.getStructuringElement(cv.MORPH_CROSS, (3,
                                                        3))  # to manipulate the orientation of dilution , large x means horizonatally dilating  more, large y means vertically dilating more
@@ -267,7 +269,7 @@ def captch_ex(file_name):
         #you can crop image and send to OCR  , false detected will return no text :)
         cropped = img_final[y :y +  h , x : x + w]
 
-        s = file_name + '/crop_' + str(index) + '.jpg' 
+        s = file_name + '/crop_' + str(index) + '.jpg'
         cv2.imwrite(s , cropped)
         index = index + 1
 
@@ -440,10 +442,12 @@ def scan_for_time_until_start(img):
 
 
 def main():
-
+    screenshot_name = 0
+    raid_level = 5
+    pn.find_boss_name_from_screenshot(screenshot_name, raid_level)
     percorrer_todas_raids()
     # captch_ex()
-    cv.destroyAllWindows()
+    # cv.destroyAllWindows()
 
 
 main()

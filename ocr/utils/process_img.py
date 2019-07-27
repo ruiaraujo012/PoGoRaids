@@ -2,8 +2,8 @@ import cv2 as cv
 import color as co
 
 
-def read_image_pokemon(number):
-    img_path = "raids/pokemon/" + str(number) + ".jpg"
+def read_image_pokemon(img_name):
+    img_path = "raids/pokemon/" + str(img_name) + ".jpg"
     img = cv.imread(img_path)
     return img
 
