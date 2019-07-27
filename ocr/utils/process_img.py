@@ -1,4 +1,5 @@
 import cv2 as cv
+import color as co
 
 
 def read_image(path):
@@ -22,6 +23,43 @@ def crop_resize_img(img):
     result_img = cv.resize(crop_img, (int(new_x), 960))
 
     return result_img
+
+
+def remove_bottom_bar(img):
+    h, w, c = img.shape
+    print("Prev size {} {}".format(h, w))
+    color = img[h-1, 0]
+
+    is_black = co.diff_between_rgb_colors(color[::-1], [0, 0, 0]) < 10
+    is_white = co.diff_between_rgb_colors(color[::-1], [255, 255, 255]) < 10
+    is_orange = co.diff_between_rgb_colors(color[::-1], [245, 80, 32]) < 10
+
+    cv.imshow("prev image", img)
+    cv.waitKey(0)
+
+    print("Color initial {} {}".format(
+        color, co.diff_between_rgb_colors(color, img[h-2, 0])))
+
+    if is_black or is_white or is_orange:
+        pixel_cut = 0
+        while(co.diff_between_rgb_colors(color, img[h-1, 0]) < 5):
+            pixel_cut += 1
+            h -= 1
+            print("{} {}".format(
+                h, co.diff_between_rgb_colors(color, img[h, 0])))
+
+        if pixel_cut > 25:
+            img = img[0:h, 0:w]
+            print("New size {} {}".format(h, w))
+            cv.imshow("new image", img)
+            cv.waitKey(0)
+
+        h, w, c = img.shape
+
+        print('Resolution size: {} x {}'.format(h, w))
+
+    width = 900
+    crop_img = img[0:int(h/3*2), 0:w]
 
 
 def crop_pokemon_name(img):
