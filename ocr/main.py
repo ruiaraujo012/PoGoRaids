@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+
 import pytesseract
 from pytesseract import Output
 import sys
@@ -11,6 +12,7 @@ import math
 import logging
 import text_validation
 import img_process
+import pokemon_name as pn
 import statistics
 import imutils
 from matplotlib import pyplot as plt
@@ -30,13 +32,13 @@ def percorrer_todas_raids():
     total_raids = 35
 
     for i in range(1, total_raids):
-        img_path = "raids/raid_" + str(i) + ".jpg"
+        img_path = "raids/pokemon/" + str(i) + ".jpg"
         name = str(i) + "_"
         # extract(img_path, name)
         # captch_ex(img_path)
         img = cv.imread(img_path)
         # img_to_boxes(img)
-        ex2(img_path)
+        extract_level(img_path)
         coords = detect_circles(img)
 
         if not coords:
@@ -99,7 +101,7 @@ def detect_circles(img):
     return image_circle
 
 
-def ex2(img_path):
+def extract_level(img_path):
     img_rgb = cv.imread(img_path)
 
     # img_rgb = cv.imrad('image.png')
@@ -116,7 +118,7 @@ def ex2(img_path):
         if w < 25 and h < 25:
             break
 
-        print(w, h)
+        # print(w, h)
         # TODO: analizar os elemtnos q se sobrepoem
 
         # TM_CCOEFF_NORMED
@@ -124,7 +126,7 @@ def ex2(img_path):
         threshold = 0.65
         loc = np.where(res >= threshold)
 
-        print(loc)
+        # print(loc)
         x_dist = 0
         for pt in zip(*loc[::-1]):
             cv.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
@@ -138,44 +140,13 @@ def ex2(img_path):
 
         if(len(loc[0]) > 0):
 
-            cv.imshow("output", img_rgb)
-            cv.imshow("output2", template)
-            cv.waitKey(0)
+            # cv.imshow("output", img_rgb)
+            # cv.imshow("output2", template)
+            # cv.waitKey(0)
             print("Level {}".format(level))
 
         template = cv.resize(template, None, fx=0.98,
                              fy=0.98, interpolation=cv.INTER_CUBIC)
-
-
-def extract_level(img):
-    img_rgb_org = img
-    img_gray_org = cv.cvtColor(img_rgb_org, cv.COLOR_BGR2GRAY)
-    template = cv.imread('raid_icon_2.png')
-    img_gray_org = img_gray_org[150:700, 400:1750]
-    w, h, c = template.shape  # [::-1]
-    template = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
-    template = template[250:1100, 30:900]
-
-    cv.imshow("te", img_gray_org)
-    cv.waitKey(0)
-
-    methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED', 'cv.TM_CCORR',
-               'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
-
-    for meth in methods:
-        img_gray = img_gray_org.copy()
-        img_rgb = img_rgb_org.copy()
-        res = cv.matchTemplate(img_gray, template, eval(meth))
-        threshold = 0.8
-        loc = np.where(res >= threshold)
-        print(loc)
-        for pt in zip(*loc[::-1]):
-            cv.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-
-        img_rgb = cv.resize(img_rgb, None, fx=0.5, fy=0.5,
-                            interpolation=cv.INTER_CUBIC)
-        cv.imshow("level", img_rgb)
-        cv.waitKey(0)
 
 
 def extract(img_path, name):
@@ -235,7 +206,7 @@ def captch_ex(file_name):
     # for black text , cv.THRESH_BINARY_INV
     ret, new_img = cv.threshold(image_final, 180, 255, cv.THRESH_BINARY)
     '''
-            line  8 to 12  : Remove noisy portion 
+            line  8 to 12  : Remove noisy portion
     '''
     kernel = cv.getStructuringElement(cv.MORPH_CROSS, (3,
                                                        3))  # to manipulate the orientation of dilution , large x means horizonatally dilating  more, large y means vertically dilating more
@@ -267,7 +238,7 @@ def captch_ex(file_name):
         #you can crop image and send to OCR  , false detected will return no text :)
         cropped = img_final[y :y +  h , x : x + w]
 
-        s = file_name + '/crop_' + str(index) + '.jpg' 
+        s = file_name + '/crop_' + str(index) + '.jpg'
         cv2.imwrite(s , cropped)
         index = index + 1
 
@@ -440,10 +411,12 @@ def scan_for_time_until_start(img):
 
 
 def main():
-
+    screenshot_name = 0
+    raid_level = 5
+    pn.find_boss_name_from_screenshot(screenshot_name, raid_level)
     percorrer_todas_raids()
     # captch_ex()
-    cv.destroyAllWindows()
+    # cv.destroyAllWindows()
 
 
 main()
