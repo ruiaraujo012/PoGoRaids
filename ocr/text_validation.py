@@ -11,7 +11,6 @@ def validate_hour_hh_mm(text):
         hour = int(hour)
         minute = int(minute)
         if hour >= 0 and hour < 24 and minute >= 0 and minute < 60:
-            # print("Deu match - {}".format(text))
             return regex[0].strip()
         # else:
         #     print("Falhou na procura de hora - {}".format(text))
@@ -33,7 +32,6 @@ def validate_hour_hh_mm_ss(text):
         second = int(second)
 
         if hour >= 0 and hour < 24 and minute >= 0 and minute < 60 and second >= 0 and second < 60:
-            print("Deu match - {}".format(text))
             return regex[0].strip()
         # else:
         #     print("Falhou na procura de hora - {}".format(text))

@@ -19,7 +19,7 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
     vscale = h/960
     hscale = w/500
 
-    print("Block heigh {}".format(block_height))
+    # print("Block heigh {}".format(block_height))
 
     # y,x
     init_x = int(w * start[1])
@@ -65,7 +65,6 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
                 text = try_multiple_thresholds_ocr(zoomed, thresholds, regex)
 
             if text:
-                print("[img_proc] Text extracted {}".format(text))
                 return text
 
             break
@@ -102,9 +101,9 @@ def threshold_binary_inv(gray_img, thresh_val, regex=()):
     ret, thresh = cv.threshold(
         gray_img, thresh_val, 255, cv.THRESH_BINARY_INV)
 
-    cv.imshow("img", thresh)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    # cv.imshow("img", thresh)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
 
     text = ocr_numbers_single_row(thresh)
     extracted_text = regex(text)
@@ -118,15 +117,15 @@ def threshold_binary_inv(gray_img, thresh_val, regex=()):
 def try_multiple_thresholds_pokemon_name(gray_img, thresholds):
 
     for th in thresholds:
-        print("Testing for thr {}".format(th))
+        # print("Testing for thr {}".format(th))
         ret, thresh = cv.threshold(gray_img, th, 255, cv.THRESH_BINARY_INV)
 
         kernel = np.ones((5, 4), np.uint8)
         img_erode = cv.erode(thresh, kernel, iterations=1)
 
-        cv.imshow("img", img_erode)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+        # cv.imshow("img", img_erode)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
 
         text = pytesseract.image_to_string(
             thresh)  # config='--psm 12'
@@ -141,9 +140,10 @@ def try_multiple_thresholds_ocr(gray_img, thresholds, regex=()):
     for th in thresholds:
         # print("Testing for thr {}".format(th))
         ret, thresh = cv.threshold(gray_img, th, 255, cv.THRESH_BINARY_INV)
-        cv.imshow("img", thresh)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+
+        # cv.imshow("img", thresh)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
 
         text = ocr_numbers_single_row(thresh)
 

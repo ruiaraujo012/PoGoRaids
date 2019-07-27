@@ -27,16 +27,20 @@ from PIL import Image
 
 logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
+f = open("results.txt", "w")
+
 
 def percorrer_todas_raids():
     total_raids = 35
 
     for i in range(1, total_raids):
+
         img_path = "raids/pokemon/" + str(i) + ".jpg"
-        name = str(i) + "_"
-        # extract(img_path, name)
         img = cv.imread(img_path)
-        extract_level(img_path)
+
+        phone_time, time_until_start, did_egg_hatch = extract(img)
+
+        level = extract_level(img_path)
         coords = detect_circles(img)
 
         if not coords:
@@ -44,7 +48,7 @@ def percorrer_todas_raids():
 
         w, h, c = img.shape
 
-        print("Coords {}".format(coords))
+        # print("Coords {}".format(coords))
 
         img = img[coords[0]-coords[2]:coords[0] +
                   coords[2], coords[1]+coords[2]:w]
@@ -56,10 +60,19 @@ def percorrer_todas_raids():
         text = pytesseract.image_to_string(
             img, config='--psm 6')
 
-        print("Extracted text {}".format(text))
+        log_raid_data(str(i), phone_time, time_until_start, did_egg_hatch)
 
-        cv.imshow("img", img)
-        cv.waitKey(0)
+
+def log_raid_data(name, phone_time, time_until_start, did_egg_hatch):
+
+    data = "=" * 11 + " Raid_" + name + " " + "=" * 11 + "\n"
+    data += "Phone time: {}".format(phone_time) + "\n"
+    data += "Time until start: {}".format(time_until_start) + "\n"
+    data += "Did egg hatch: {}".format(True if did_egg_hatch else False) + "\n"
+    data += "="*30+"\n\n" + "\n\n"
+
+    print(data)
+    f.write(data)
 
 
 def detect_circles(img):
@@ -147,20 +160,13 @@ def extract_level(img_path):
                              fy=0.98, interpolation=cv.INTER_CUBIC)
 
 
-def extract(img_path, name):
-    img = cv.imread(img_path)
+def extract(img):
     h, w, c = img.shape
-
-    print("\n\n::::::::" + img_path + " :::::::: ")
 
     phone_time = scan_for_current_time(img)
     time_until_start, did_egg_hatch = scan_for_time_until_start(img)
-    # if did_egg_hatch:
-    #     scan_for_pokemon_name(img)
 
-    print("Phone time: {}".format(phone_time))
-    print("Time until start: {}".format(time_until_start))
-    print("\n\n\n")
+    return phone_time, time_until_start, did_egg_hatch
 
 
 def section_cut(img, name):
