@@ -264,11 +264,14 @@ def find_boss_name(img, raid_level):
             max_ratio = ratio
             pokemon_name = boss_name
 
-    print('=' * 30)
-    print('Text found: {}'.format(text_found))
-    print('Text found with regex: {}'.format(boss_name_found))
-    print('Best match name: {}'.format(pokemon_name))
-    print('Best match ratio: {}'.format(max_ratio))
-    print('=' * 30)
+    if max_ratio != 0:
+        print('=' * 30)
+        print('Text found: {}'.format(text_found))
+        print('Text found with regex: {}'.format(boss_name_found))
+        print('Best match name: {}'.format(pokemon_name))
+        print('Best match ratio: {}'.format(max_ratio))
+        print('=' * 30)
+    else:
+        pokemon_name = None
 
     return pokemon_name

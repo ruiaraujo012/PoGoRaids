@@ -63,8 +63,12 @@ def main():
         log_raid_data('raid', phone_time, time_until_finish,
                       did_egg_hatch, gym_name, raid_level)
 
-        pi.find_boss_name(img, raid_level)
-    # percorrer_todas_raids()
+        detect = pi.find_boss_name(img, raid_level)
+
+        if detect == None:
+            print(' Error! '.center(40, '*'))
+            print(" Can't read pokemon name! ".center(40, '*'))
+            print(''.center(40, '*'))
 
 
 main()
