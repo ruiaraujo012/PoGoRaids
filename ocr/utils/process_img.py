@@ -4,7 +4,6 @@ import re
 import cv2 as cv
 import numpy as np
 from utils import color as co
-from utils import process_img as pi
 from utils import name_ratio as nr
 from utils import get_bosses as gb
 
@@ -34,6 +33,18 @@ def crop_pokemon_name(img):
     h, w, c = img.shape
 
     crop_img = img[355:475, int(w * 0.1):int(w * 0.9)]
+
+    return crop_img
+
+
+def crop_raid_level(img, raid_hatched):
+
+    if raid_hatched:
+        h, w, c = img.shape
+
+        crop_img = img[180:245, int(w * 0.3):int(w * 0.7)]
+    else:
+        t = None
 
     return crop_img
 
@@ -237,13 +248,13 @@ def detect_circles(img):
 
 def find_boss_name(img, raid_level):
     # FIXME: remover barra superior, falham as imagens 3, 6 e 41.
-    new_img = pi.remove_bottom_bar(img)
+    new_img = remove_bottom_bar(img)
 
-    processed_img = pi.crop_resize_img(new_img)
+    processed_img = crop_resize_img(new_img)
 
-    pokemon_name_img = pi.crop_pokemon_name(processed_img)
+    pokemon_name_img = crop_pokemon_name(processed_img)
 
-    thresh = pi.get_threshold(pokemon_name_img, 245, True)
+    thresh = get_threshold(pokemon_name_img, 245, True)
 
     text_found = pytesseract.image_to_string(
         thresh, config="--psm 8")

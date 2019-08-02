@@ -48,7 +48,9 @@ def main():
         phone_time, time_until_finish, did_egg_hatch = ex.extract(img)
 
         # TODO: Corrigir o nivel, corre mal várias vezes
-        raid_level = ex.extract_level(img)
+        croped_img = pi.crop_resize_img(img)
+        level_img = pi.crop_raid_level(croped_img, did_egg_hatch)
+        raid_level = ex.extract_level(level_img)
 
         # FIXME: Mudar isto depois do anterior estar corrigido
         if raid_level == 0:

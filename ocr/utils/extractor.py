@@ -50,9 +50,19 @@ def scan_for_time_until_finish(img):
 
 def extract_level(img):
     img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    img_gray = cv.GaussianBlur(img_gray, (9, 9), cv.BORDER_DEFAULT)
+
     template = cv.imread('images/raids/raid_icon.png', 0)
-    template = cv.resize(template, None, fx=0.25,
-                         fy=0.25, interpolation=cv.INTER_CUBIC)
+    template = cv.resize(template, None, fx=0.098, fy=0.098,
+                         interpolation=cv.INTER_CUBIC)
+    # template = cv.GaussianBlur(template, (9, 9), cv.BORDER_DEFAULT)
+
+    print(template.shape)
+    print(img_gray.shape)
+
+    cv.imshow('res.png', img_gray)
+    cv.imshow('res2.png', template)
+    cv.waitKey(0)
 
     loc = [[]]
     max_level = 0
@@ -60,22 +70,22 @@ def extract_level(img):
         level = 0
         w, h = template.shape[::-1]
 
-        if w < 22 and h < 22:
+        if w < 20 and h < 20:
             break
 
         # print(w, h)
         # TODO: analizar os elemtnos q se sobrepoem
 
         res = cv.matchTemplate(img_gray, template, cv.TM_CCOEFF_NORMED)
-        threshold = 0.65
+        threshold = 0.5
         loc = np.where(res >= threshold)
-
         # print(loc)
-        x_dist = 0
+
         for pt in zip(*loc[::-1]):
             cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
 
-            # cv.imshow('res.png', img_rgb)
+            # cv.imshow('res2.png', img)
+            # cv.waitKey(0)
 
         # [187, 188, 221, 222, 256, 290, 324, 325])
 
@@ -86,14 +96,19 @@ def extract_level(img):
         # print(x_points)
 
         for (index, point) in enumerate(x_points[:-1]):
+            # print(index)
+            # print(point)
             diff = abs(loc[1][index + 1] - point)
+            # print(diff)
+            # print('w: {}'.format(w/2))
             if diff > w/2:
                 # print("Prev {} - Next {}".format(point, loc[1][index+1]))
                 level += 1
 
         max_level = max(level, max_level)
 
-        if max_level == 5:
+        if max_level >= 5:
+            max_level = 5
             break
 
         if len(loc[0]) >= 1 and level == 0:
@@ -106,6 +121,8 @@ def extract_level(img):
                              fy=0.95, interpolation=cv.INTER_CUBIC)
 
     # print("Level {}".format(max_level))
+
+    print('m: {}'.format(max_level))
 
     return max_level
 
