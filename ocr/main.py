@@ -24,7 +24,7 @@ def read_args():
 
 def log_raid_data(name, phone_time, time_until_finish, did_egg_hatch, gym_name, level):
 
-    data = "=" * 15 + " Raid_" + name + " " + "=" * 15 + "\n"
+    data = "\n" + "=" * 15 + " Raid_" + name + " " + "=" * 15 + "\n"
     data += "Gym name: {}".format(gym_name) + "\n"
     data += "Level: {}".format(level) + "\n"
     data += "Phone time: {}".format(phone_time) + "\n"
@@ -33,7 +33,7 @@ def log_raid_data(name, phone_time, time_until_finish, did_egg_hatch, gym_name, 
     else:
         data += "Time to strart: {}".format(time_until_finish) + "\n"
     data += "Did egg hatch: {}".format(True if did_egg_hatch else False) + "\n"
-    data += "="*40+"\n\n" + "\n\n"
+    data += "="*40+"\n"
 
     print(data)
     f.write(data)
@@ -47,9 +47,10 @@ def main():
 
         phone_time, time_until_finish, did_egg_hatch = ex.extract(img)
 
-        # TODO: Corrigir o nivel, corre mal várias vezes
-        croped_img = pi.crop_resize_img(img)
-        level_img = pi.crop_raid_level(croped_img, did_egg_hatch)
+        img_no_bottom, have_bottom_bar = pi.remove_bottom_bar(img)
+        croped_img = pi.crop_resize_img(img_no_bottom)
+        level_img = pi.crop_raid_level(
+            croped_img, did_egg_hatch, have_bottom_bar)
         raid_level = ex.extract_level(level_img)
 
         # FIXME: Mudar isto depois do anterior estar corrigido
@@ -65,12 +66,13 @@ def main():
         log_raid_data('raid', phone_time, time_until_finish,
                       did_egg_hatch, gym_name, raid_level)
 
-        detect = pi.find_boss_name(img, raid_level)
+        if did_egg_hatch:
+            pokemon_name = pi.find_boss_name(croped_img, raid_level)
 
-        if detect == None:
-            print(' Error! '.center(40, '*'))
-            print(" Can't read pokemon name! ".center(40, '*'))
-            print(''.center(40, '*'))
+            if pokemon_name == None:
+                print(' Error! '.center(40, '*'))
+                print(" Can't read pokemon name! ".center(40, '*'))
+                print(''.center(40, '*'))
 
 
 main()

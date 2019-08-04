@@ -10,6 +10,7 @@ from utils import get_bosses as gb
 
 def read_image_pokemon(img_name):
     img_path = "images/raids/pokemon/" + str(img_name)
+    # img_path = "images/raids/eggs/" + str(img_name)
     img = cv.imread(img_path)
     return img
 
@@ -37,14 +38,19 @@ def crop_pokemon_name(img):
     return crop_img
 
 
-def crop_raid_level(img, raid_hatched):
+def crop_raid_level(img, raid_hatched, have_bottom):
+    h, w, c = img.shape
 
     if raid_hatched:
-        h, w, c = img.shape
-
-        crop_img = img[180:245, int(w * 0.3):int(w * 0.7)]
+        if have_bottom:
+            crop_img = img[190:250, int(w * 0.3):int(w * 0.7)]
+        else:
+            crop_img = img[190:250, int(w * 0.3):int(w * 0.7)]
     else:
-        t = None
+        if have_bottom:
+            crop_img = img[435:500, int(w * 0.25):int(w * 0.75)]
+        else:
+            crop_img = img[400:475, int(w * 0.25):int(w * 0.75)]
 
     return crop_img
 
@@ -65,6 +71,7 @@ def get_threshold(img, thresh_val=240, which=False):
 
 
 def remove_bottom_bar(img):
+    have = False
     h, w, c = img.shape
 
     color = img[h-1, 0]
@@ -74,6 +81,7 @@ def remove_bottom_bar(img):
     is_orange = co.diff_between_rgb_colors(color[::-1], [245, 80, 32]) < 10
 
     if is_black or is_white or is_orange:
+        have = True
         pixel_cut = 0
         while(co.diff_between_rgb_colors(color, img[h-1, 0]) < 5):
             pixel_cut += 1
@@ -82,7 +90,7 @@ def remove_bottom_bar(img):
         if pixel_cut > 25:
             img = img[0:h, 0:w]
 
-    return img
+    return img, have
 
 
 def zoom_img(img, fx, fy):
@@ -112,7 +120,6 @@ def ocr_numbers_single_row(img):
 
 
 def section_by_color(img, color_goal, start, end, block_height, threshold_type, thresholds, pixels_quantity=85, regex=()):
-    color_found_initial_coords = []
     found_pixels = []
     count_pixels = 0
     h, w, c = img.shape
@@ -248,11 +255,7 @@ def detect_circles(img):
 
 def find_boss_name(img, raid_level):
     # FIXME: remover barra superior, falham as imagens 3, 6 e 41.
-    new_img = remove_bottom_bar(img)
-
-    processed_img = crop_resize_img(new_img)
-
-    pokemon_name_img = crop_pokemon_name(processed_img)
+    pokemon_name_img = crop_pokemon_name(img)
 
     thresh = get_threshold(pokemon_name_img, 245, True)
 
@@ -286,3 +289,31 @@ def find_boss_name(img, raid_level):
         pokemon_name = None
 
     return pokemon_name
+
+
+def validate_hour_hh_mm(text):
+    regex = re.findall(r'\d{1,2}:\d{2}', text)
+
+    if regex:
+        hour, minute = regex[0].split(":")
+        hour = int(hour)
+        minute = int(minute)
+        if hour >= 0 and hour < 24 and minute >= 0 and minute < 60:
+            return regex[0].strip()
+
+    return False
+
+
+def validate_hour_hh_mm_ss(text):
+    regex = re.findall(r'\d{1,2}:\d{2}:\d{2}', text)
+
+    if regex:
+        hour, minute, second = regex[0].split(":")
+        hour = int(hour)
+        minute = int(minute)
+        second = int(second)
+
+        if hour >= 0 and hour < 24 and minute >= 0 and minute < 60 and second >= 0 and second < 60:
+            return regex[0].strip()
+
+    return False

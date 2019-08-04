@@ -2,7 +2,6 @@ import pytesseract
 import cv2 as cv
 import numpy as np
 from utils import process_img as pi
-from utils import process_text as pt
 
 
 def scan_for_current_time(img):
@@ -18,7 +17,7 @@ def scan_for_current_time(img):
     # TODO : reajustar estes valores
     thresholds = [190, 200, 210, 165, 150, 130, 100, 85, 50, 25]
     extracted_text = pi.try_multiple_thresholds_ocr(
-        zoomed, thresholds, pt.validate_hour_hh_mm)
+        zoomed, thresholds, pi.validate_hour_hh_mm)
 
     return extracted_text
 
@@ -35,14 +34,14 @@ def extract(img):
 def scan_for_time_until_finish(img):
     orange = [243, 121, 53]
     time_until_finish = pi.section_by_color(img, orange,  [0.5, 0.65], [0.8, 0.99], 34, 0, [
-    ], regex=pt.validate_hour_hh_mm_ss)
+    ], regex=pi.validate_hour_hh_mm_ss)
     did_egg_hatch = True
 
     if not time_until_finish:
         # print("Testing timer before hatch")
         pink = [243, 136, 142]
         time_until_finish = pi.section_by_color(img, pink,  [0.15, 0.2], [0.45, 0.85], 50, 0, [
-        ], pixels_quantity=150, regex=pt.validate_hour_hh_mm_ss)
+        ], pixels_quantity=150, regex=pi.validate_hour_hh_mm_ss)
         did_egg_hatch = False
 
     return time_until_finish, did_egg_hatch
@@ -57,12 +56,9 @@ def extract_level(img):
                          interpolation=cv.INTER_CUBIC)
     # template = cv.GaussianBlur(template, (9, 9), cv.BORDER_DEFAULT)
 
-    print(template.shape)
-    print(img_gray.shape)
-
-    cv.imshow('res.png', img_gray)
-    cv.imshow('res2.png', template)
-    cv.waitKey(0)
+    # cv.imshow('res.png', img_gray)
+    # cv.imshow('res2.png', template)
+    # cv.waitKey(0)
 
     loc = [[]]
     max_level = 0
@@ -122,7 +118,7 @@ def extract_level(img):
 
     # print("Level {}".format(max_level))
 
-    print('m: {}'.format(max_level))
+    # print('m: {}'.format(max_level))
 
     return max_level
 
