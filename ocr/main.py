@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import cv2 as cv
 from utils import process_img as pi
 from utils import extractor as ex
 
@@ -45,12 +46,13 @@ def main():
         print('Image name: [{}]'.format(img_name))
         img = pi.read_image_pokemon(img_name)
 
-        phone_time, time_until_finish, did_egg_hatch = ex.extract(img)
-
-        img_no_bottom, have_bottom_bar = pi.remove_bottom_bar(img)
+        img_no_bottom = pi.remove_bottom_bar(img)
         croped_img = pi.crop_resize_img(img_no_bottom)
+
+        phone_time, raid_time, did_egg_hatch = ex.extract(croped_img)
+
         level_img = pi.crop_raid_level(
-            croped_img, did_egg_hatch, have_bottom_bar)
+            croped_img, did_egg_hatch)
         raid_level = ex.extract_level(level_img)
 
         # FIXME: Mudar isto depois do anterior estar corrigido
@@ -63,7 +65,7 @@ def main():
             # TODO: limpar o texto extraido do nome do ginasio
             gym_name = ex.extract_gym_name(img, coords)
 
-        log_raid_data('raid', phone_time, time_until_finish,
+        log_raid_data('raid', phone_time, raid_time,
                       did_egg_hatch, gym_name, raid_level)
 
         if did_egg_hatch:

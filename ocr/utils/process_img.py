@@ -9,8 +9,8 @@ from utils import get_bosses as gb
 
 
 def read_image_pokemon(img_name):
-    img_path = "images/raids/pokemon/" + str(img_name)
-    # img_path = "images/raids/eggs/" + str(img_name)
+    # img_path = "images/raids/pokemon/" + str(img_name)
+    img_path = "images/raids/eggs/" + str(img_name)
     img = cv.imread(img_path)
     return img
 
@@ -38,19 +38,18 @@ def crop_pokemon_name(img):
     return crop_img
 
 
-def crop_raid_level(img, raid_hatched, have_bottom):
+def crop_raid_level(img, raid_hatched):
     h, w, c = img.shape
 
     if raid_hatched:
-        if have_bottom:
-            crop_img = img[190:250, int(w * 0.3):int(w * 0.7)]
-        else:
-            crop_img = img[190:250, int(w * 0.3):int(w * 0.7)]
+        crop_img = img[int(h * 0.21):int(h * 0.27),
+                       int(w * 0.3):int(w * 0.7)]
     else:
-        if have_bottom:
-            crop_img = img[435:500, int(w * 0.25):int(w * 0.75)]
-        else:
-            crop_img = img[400:475, int(w * 0.25):int(w * 0.75)]
+        crop_img = img[int(h * 0.4):int(h * 0.55),
+                       int(w * 0.25):int(w * 0.75)]
+
+    cv.imshow('c', crop_img)
+    cv.waitKey(0)
 
     return crop_img
 
@@ -71,7 +70,6 @@ def get_threshold(img, thresh_val=240, which=False):
 
 
 def remove_bottom_bar(img):
-    have = False
     h, w, c = img.shape
 
     color = img[h-1, 0]
@@ -81,7 +79,6 @@ def remove_bottom_bar(img):
     is_orange = co.diff_between_rgb_colors(color[::-1], [245, 80, 32]) < 10
 
     if is_black or is_white or is_orange:
-        have = True
         pixel_cut = 0
         while(co.diff_between_rgb_colors(color, img[h-1, 0]) < 5):
             pixel_cut += 1
@@ -90,7 +87,7 @@ def remove_bottom_bar(img):
         if pixel_cut > 25:
             img = img[0:h, 0:w]
 
-    return img, have
+    return img
 
 
 def zoom_img(img, fx, fy):
@@ -126,8 +123,6 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
 
     vscale = h/960
     hscale = w/500
-
-    # print("Block heigh {}".format(block_height))
 
     # y,x
     init_x = int(w * start[1])
@@ -193,19 +188,12 @@ def cut_block(img, found_pixels, block_height):
     sec_x = color_found_initial_coords[1]
     sec_y = color_found_initial_coords[0]
 
-    # print("Encontrou um bloco de cor com inicio em x.{} y.{}".format(
-    #     sec_x, sec_y))
-
     return img[sec_y:sec_y+block_height, sec_x:sec_x+box_width]
 
 
 def threshold_binary_inv(gray_img, thresh_val, regex=()):
     ret, thresh = cv.threshold(
         gray_img, thresh_val, 255, cv.THRESH_BINARY_INV)
-
-    # cv.imshow("img", thresh)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
 
     text = ocr_numbers_single_row(thresh)
     extracted_text = regex(text)
