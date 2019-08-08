@@ -1,0 +1,143 @@
+[
+    {
+        "img" : "0.jpg",
+        "gym_name": "Coreto do Livramento",
+        "mobile_time":  "20:56",
+        "time_until_finish" : "0:14:39",
+        "level" : 5,
+        "pokemon" : "Raikou"
+    },
+    {
+        "img" : "1.jpg",
+        "gym_name": "Green Tower - Braga Parque",
+        "mobile_time":  "11:25",
+        "time_until_finish" : "0:00:56",
+        "level" : 1,
+        "pokemon" : "Drifloon"
+
+    },
+    {
+        "img" : "2.jpg",
+        "gym_name": "Colunas das 3",
+        "mobile_time":  "11:24",
+        "time_until_finish" : "0:43:39",
+        "level" : 3,
+        "pokemon" : "Machamp"
+
+    },
+    {
+        "img" : "3.jpg",
+        "gym_name": "Mural Aquela Jeitosa",
+        "mobile_time":  "11:24",
+        "time_until_finish" : "0:43:54",
+        "level" : 2,
+        "pokemon" : "Sneasel"
+
+    },
+    {
+        "img" : "4.jpg",
+        "gym_name": "Centro Residencial",
+        "mobile_time":  "11:22",
+        "time_until_finish" : "0:41:16",
+        "level" : 2,
+        "pokemon" : "Sneasel"
+
+    },
+    {
+        "img" : "5.jpg",
+        "gym_name": "Lago Dos Patos",
+        "mobile_time":  "17:57",
+        "time_until_finish" : "0:32:29",
+        "level" : 4,
+        "pokemon" : "Tyranitar"
+
+    },
+    {
+        "img" : "6.jpg",
+        "gym_name": "Capela De S. Bartolomeu",
+        "mobile_time":  "10:46",
+        "time_until_finish" : "0:35:38",
+        "level" : 5,
+        "pokemon" : "Mewtwo"
+
+    },
+    {
+        "img" : "7.jpg",
+        "gym_name": "Igreja da Estação",
+        "mobile_time":  "16:20",
+        "time_until_finish" : "0:35:57",
+        "level" : 5,
+        "pokemon" : "Mewtwo"
+
+    },
+    {
+        "img" : "8.jpg",
+        "gym_name": "Fonte do Mileu",
+        "mobile_time":  "19:48",
+        "time_until_finish" : "0:27:17",
+        "level" : 5,
+        "pokemon" : "Mewtwo"
+
+    },
+    {
+        "img" : "9.jpg",
+        "gym_name": "Igreja da Estação",
+        "mobile_time":  "15:45",
+        "time_until_finish" : "0:41:29",
+        "level" : 5,
+        "pokemon" : "Groudon"
+
+    },
+    {
+        "img" : "10.jpg",
+        "gym_name": "Igreja da Misericórdia",
+        "mobile_time":  "17:11",
+        "time_until_finish" : "0:41:28",
+        "level" : 5,
+        "pokemon" : "Cresselia"
+
+    },
+    {
+        "img" : "11.jpg",
+        "gym_name": "Fonte de Pasto",
+        "mobile_time":  "18:29",
+        "time_until_finish" : "0:39:28",
+        "level" : 4,
+        "pokemon" : "Tyranitar"
+
+    },
+    {
+        "img" : "12.jpg",
+        "gym_name": "Igreja da Misericórdia",
+        "mobile_time":  "18:51",
+        "time_until_finish" : "0:28:27",
+        "level" : 5,
+        "pokemon" : "Cresselia"
+
+    },
+    {
+        "img" : "13.jpg",
+        "gym_name": "Chafariz de St. André",
+        "mobile_time":  "17:14",
+        "time_until_finish" : "0:43:17",
+        "level" : 5,
+        "pokemon" : "Cresselia"
+
+    },
+    {
+        "img" : "14.jpg",
+        "gym_name": "Lago Dos Patos",
+        "mobile_time":  "10:37",
+        "time_until_finish" : "0:42:16",
+        "level" : 4,
+        "pokemon" : "Metagross"
+    },
+    {
+        "img" : "15.jpg",
+        "gym_name": "Chafariz de St. André",
+        "mobile_time":  "18:17",
+        "time_until_finish" : "0:43:20",
+        "level" : 3,
+        "pokemon" : "Dragonite"
+    }
+]
