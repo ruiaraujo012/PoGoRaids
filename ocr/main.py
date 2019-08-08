@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import datetime as dt
 import cv2 as cv
 from utils import process_img as pi
 from utils import extractor as ex
