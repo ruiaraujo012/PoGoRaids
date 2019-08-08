@@ -49,8 +49,8 @@ def extract_level(img):
     # img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     # img_gray = cv.GaussianBlur(img_gray, (7, 7), cv.BORDER_DEFAULT)
     edges = cv.Canny(img, 50, 200)
-    cv.imshow('edge', edges)
-    cv.waitKey(0)
+    # cv.imshow('edge', edges)
+    # cv.waitKey(0)
 
     template = cv.imread('images/raids/unknown.png', 0)
     template = cv.resize(template, None, fx=1.4, fy=1.4,
@@ -58,8 +58,8 @@ def extract_level(img):
 
     edges_t = cv.Canny(template, 50, 200)
 
-    cv.imshow('edge2', edges_t)
-    cv.waitKey(0)
+    # cv.imshow('edge2', edges_t)
+    # cv.waitKey(0)
 
     # template = cv.GaussianBlur(template, (1, 1), cv.BORDER_DEFAULT)
 
@@ -81,11 +81,11 @@ def extract_level(img):
         g = random.randint(0, 255)
         b = random.randint(0, 255)
 
-        for pt in zip(*loc[::-1]):
-            cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (r, g, b), 2)
-            cv.imshow('rec', img)
+        # for pt in zip(*loc[::-1]):
+        #     cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (r, g, b), 2)
+        #     cv.imshow('rec', img)
 
-        cv.waitKey(0)
+        # cv.waitKey(0)
 
         # [187, 188, 221, 222, 256, 290, 324, 325])
         x_points = loc[1]
@@ -115,8 +115,8 @@ def extract_level(img):
         edges_t = cv.resize(edges_t, None, fx=0.95,
                             fy=0.95, interpolation=cv.INTER_CUBIC)
 
-        cv.imshow('edge2', edges_t)
-        cv.waitKey(0)
+        # cv.imshow('edge2', edges_t)
+        # cv.waitKey(0)
 
     return max_level
 

@@ -6,11 +6,17 @@ import numpy as np
 from utils import color as co
 from utils import name_ratio as nr
 from utils import get_bosses as gb
+from utils import extractor as ex
 
 
 def read_image_pokemon(img_name):
     img_path = "images/raids/pokemon/" + str(img_name)
-    # img_path = "images/raids/eggs/" + str(img_name)
+    img = cv.imread(img_path)
+    return img
+
+
+def read_image_egg(img_name):
+    img_path = "images/raids/eggs/" + str(img_name)
     img = cv.imread(img_path)
     return img
 
@@ -50,8 +56,8 @@ def crop_raid_level(img, raid_hatched):
         crop_img = img[int(h * 0.4):int(h * 0.55),
                        int(w * 0.25):int(w * 0.75)]
 
-    cv.imshow('c', crop_img)
-    cv.waitKey(0)
+    # cv.imshow('c', crop_img)
+    # cv.waitKey(0)
 
     return crop_img
 
@@ -307,3 +313,38 @@ def validate_hour_hh_mm_ss(text):
             return regex[0].strip()
 
     return False
+
+
+def process_img(img):
+
+    img_no_bottom = remove_bottom_bar(img)
+    croped_img = crop_resize_img(img_no_bottom)
+
+    phone_time, raid_time, did_egg_hatch = ex.extract(croped_img)
+
+    level_img = crop_raid_level(
+        croped_img, did_egg_hatch)
+    raid_level = ex.extract_level(level_img)
+
+    if raid_level == 0:
+        print(' Error! '.center(40, '*'))
+        print(" Can't read raid level! ".center(40, '*'))
+        print(''.center(40, '*'))
+
+    coords = detect_circles(img)
+
+    pokemon_name = None
+
+    if coords:
+        # TODO: limpar o texto extraido do nome do ginasio
+        gym_name = ex.extract_gym_name(img, coords)
+
+    if did_egg_hatch:
+        pokemon_name = find_boss_name(croped_img, raid_level)
+
+        if pokemon_name == None:
+            print(' Error! '.center(40, '*'))
+            print(" Can't read pokemon name! ".center(40, '*'))
+            print(''.center(40, '*'))
+
+    return phone_time, raid_time, did_egg_hatch, gym_name, raid_level, pokemon_name
