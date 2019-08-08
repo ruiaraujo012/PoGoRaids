@@ -9,8 +9,8 @@ from utils import get_bosses as gb
 
 
 def read_image_pokemon(img_name):
-    img_path = "images/raids/pokemon/" + str(img_name)
-    # img_path = "images/raids/eggs/" + str(img_name)
+    # img_path = "images/raids/pokemon/" + str(img_name)
+    img_path = "images/raids/eggs/" + str(img_name)
     img = cv.imread(img_path)
     return img
 
