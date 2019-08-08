@@ -9,8 +9,8 @@ from utils import get_bosses as gb
 
 
 def read_image_pokemon(img_name):
-    # img_path = "images/raids/pokemon/" + str(img_name)
-    img_path = "images/raids/eggs/" + str(img_name)
+    img_path = "images/raids/pokemon/" + str(img_name)
+    # img_path = "images/raids/eggs/" + str(img_name)
     img = cv.imread(img_path)
     return img
 
@@ -44,6 +44,8 @@ def crop_raid_level(img, raid_hatched):
     if raid_hatched:
         crop_img = img[int(h * 0.21):int(h * 0.27),
                        int(w * 0.3):int(w * 0.7)]
+        crop_img = cv.resize(crop_img, None, fx=1.4, fy=1.4,
+                             interpolation=cv.INTER_CUBIC)
     else:
         crop_img = img[int(h * 0.4):int(h * 0.55),
                        int(w * 0.25):int(w * 0.75)]
@@ -242,7 +244,7 @@ def detect_circles(img):
 
 
 def find_boss_name(img, raid_level):
-    # FIXME: remover barra superior, falham as imagens 3, 6 e 41.
+    # FIXME: remover barra superior, falham as imagens
     pokemon_name_img = crop_pokemon_name(img)
 
     thresh = get_threshold(pokemon_name_img, 245, True)

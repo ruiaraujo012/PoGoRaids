@@ -1,4 +1,5 @@
 import pytesseract
+import random
 import cv2 as cv
 import numpy as np
 from utils import process_img as pi
@@ -45,52 +46,77 @@ def scan_raid_time(img):
 
 
 def extract_level(img):
-    img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    img_gray = cv.GaussianBlur(img_gray, (7, 7), cv.BORDER_DEFAULT)
+    # img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    # img_gray = cv.GaussianBlur(img_gray, (7, 7), cv.BORDER_DEFAULT)
+    edges = cv.Canny(img, 50, 200)
+    cv.imshow('edge', edges)
+    cv.waitKey(0)
 
-    template = cv.imread('images/raids/raid_icon.png', 0)
-    template = cv.resize(template, None, fx=0.098, fy=0.098,
+    template = cv.imread('images/raids/unknown.png', 0)
+    template = cv.resize(template, None, fx=1.4, fy=1.4,
                          interpolation=cv.INTER_CUBIC)
-    template = cv.GaussianBlur(template, (1, 1), cv.BORDER_DEFAULT)
+
+    edges_t = cv.Canny(template, 50, 200)
+
+    cv.imshow('edge2', edges_t)
+    cv.waitKey(0)
+
+    # template = cv.GaussianBlur(template, (1, 1), cv.BORDER_DEFAULT)
 
     loc = [[]]
     max_level = 0
     while(True):
         level = 0
-        w, h = template.shape[::-1]
+        w, h = edges_t.shape[::-1]
+        # w, h = edges_t.shape[:2]
 
-        if w < 20 and h < 20:
+        if w <= 50 and h <= 50:
             break
 
-        # TODO: analizar os elemtnos q se sobrepoem
-        res = cv.matchTemplate(img_gray, template, cv.TM_CCOEFF_NORMED)
-        threshold = 0.5
+        res = cv.matchTemplate(edges, edges_t, cv.TM_CCOEFF_NORMED)
+        threshold = 0.15
         loc = np.where(res >= threshold)
 
+        r = random.randint(0, 255)
+        g = random.randint(0, 255)
+        b = random.randint(0, 255)
+
         for pt in zip(*loc[::-1]):
-            cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+            cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (r, g, b), 2)
+            cv.imshow('rec', img)
+
+        cv.waitKey(0)
 
         # [187, 188, 221, 222, 256, 290, 324, 325])
         x_points = loc[1]
         x_points.sort()
 
-        for (index, point) in enumerate(x_points[:-1]):
-            diff = abs(loc[1][index + 1] - point)
-            if diff > w/2:
-                level += 1
+        levels = x_points
+        levels = list(dict.fromkeys(levels))
 
-        max_level = max(level, max_level)
+        if levels:
+            del_index = []
+
+            for (index, point) in enumerate(levels[:-1]):
+                diff = abs(levels[index+1] - point)
+                if diff < 10:
+                    del_index.append(index + 1)
+
+            for i in del_index[::-1]:
+                del levels[i]
+
+            level = len(levels)
+            max_level = max(level, max_level)
 
         if max_level >= 5:
             max_level = 5
             break
 
-        if len(loc[0]) >= 1 and level == 0:
-            level = 1
+        edges_t = cv.resize(edges_t, None, fx=0.95,
+                            fy=0.95, interpolation=cv.INTER_CUBIC)
 
-        template = cv.resize(template, None, fx=0.95,
-                             fy=0.95, interpolation=cv.INTER_CUBIC)
-        template = cv.GaussianBlur(template, (3, 3), cv.BORDER_DEFAULT)
+        cv.imshow('edge2', edges_t)
+        cv.waitKey(0)
 
     return max_level
 

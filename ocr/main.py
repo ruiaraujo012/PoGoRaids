@@ -55,9 +55,10 @@ def main():
             croped_img, did_egg_hatch)
         raid_level = ex.extract_level(level_img)
 
-        # FIXME: Mudar isto depois do anterior estar corrigido
         if raid_level == 0:
-            raid_level = 5
+            print(' Error! '.center(40, '*'))
+            print(" Can't read raid level! ".center(40, '*'))
+            print(''.center(40, '*'))
 
         coords = pi.detect_circles(img)
 
