@@ -3,7 +3,6 @@
 import argparse
 import logging
 import datetime as dt
-import cv2 as cv
 from utils import process_img as pi
 from utils import extractor as ex
 from tests import ocr as test_ocr
@@ -34,7 +33,7 @@ def main():
     if test_ocr_eggs:
         test_ocr.test_ocr()
 
-    if img_name != None:
+    if img_name is not None:
         print("IMG NAME" + img_name)
         img = pi.read_image(img_name)
         extracted_info = pi.process_img(img)
