@@ -6,24 +6,23 @@ from utils import log
 f = open("tests.txt", "w")
 
 
-def test_ocr_eggs():
+def test_ocr():
 
-    with open('data/test_eggs.json') as egg:
-        imgs = json.load(egg)
-        # print(imgs)
+    with open('data/test_eggs.json') as json_file:
+        imgs = json.load(json_file)
 
-        for egg_img in imgs:
-            img = pi.read_image_egg(egg_img['img'])
-            phone_time, time_until_start, did_egg_hatch, gym_name, level, pokemon = pi.process_img(
+        for row in imgs:
+            img = pi.read_image(row['img'])
+            phone_time, raid_time, did_egg_hatch, gym_name, level, pokemon = pi.process_img(
                 img)
-            log.log_raid_data(egg_img['img'], phone_time, time_until_start,
+            log.log_raid_data(row['img'], phone_time, raid_time,
                               did_egg_hatch, gym_name, level, pokemon)
 
-            validate_data(egg_img['img'], phone_time, time_until_start,
-                          did_egg_hatch, gym_name, level, pokemon, egg_img)
+            validate_data(row['img'], phone_time, raid_time,
+                          did_egg_hatch, gym_name, level, pokemon, row)
 
 
-def validate_data(name, phone_time, time_until_start, did_egg_hatch, gym_name, level, pokemon, data):
+def validate_data(name, phone_time, raid_time, did_egg_hatch, gym_name, level, pokemon, data):
 
     info = "=" * 20 + " " + name + " " + "=" * 20 + "\n"
 
@@ -40,22 +39,36 @@ def validate_data(name, phone_time, time_until_start, did_egg_hatch, gym_name, l
         info += "Invalid phone time, expected {}, result: {} \n".format(
             data['mobile_time'], phone_time)
 
-    try:
-        if(dt.datetime.strptime(data['time_until_start'], '%H:%M:%S') != dt.datetime.strptime(time_until_start, '%H:%M:%S')):
+    if 'time_until_start' in data:
+        try:
+            if(dt.datetime.strptime(data['time_until_start'], '%H:%M:%S') != dt.datetime.strptime(raid_time, '%H:%M:%S')):
+                info += "Invalid time until start, expected {}, result: {} \n".format(
+                    data['time_until_start'], raid_time)
+        except:
             info += "Invalid time until start, expected {}, result: {} \n".format(
-                data['time_until_start'], time_until_start)
-    except:
-        info += "Invalid time until start, expected {}, result: {} \n".format(
-            data['time_until_start'], time_until_start)
+                    data['time_until_start'], raid_time)
+
+    elif 'time_until_finish' in data:
+        try:
+            if(dt.datetime.strptime(data['time_until_finish'], '%H:%M:%S') != dt.datetime.strptime(raid_time, '%H:%M:%S')):
+                info += "Invalid time until start, expected {}, result: {} \n".format(
+                    data['time_until_start'], raid_time)
+        except:
+            info += "Invalid time until finish, expected {}, result: {} \n".format(
+                data['time_until_start'], raid_time)
 
     if(data['level'] != level):
         info += "Invalid level, expected {}, result: {} \n".format(
             data['level'], level)
 
+    if(pokemon in data and data['pokemon'] != pokemon):
+        info += "Invalid pokemon, expected {}, result: {} \n".format(
+            data['pokemon'], pokemon)
+
     if(len(info.split("\n")) > 1):
         f.write(info)
-        print(info)
+        print(info + "\n")
     else:
-        success_message = "==> {} passed all tests".format(name)
+        success_message = "==> {} passed all tests \n".format(name)
         print(success_message)
         f.write(success_message)

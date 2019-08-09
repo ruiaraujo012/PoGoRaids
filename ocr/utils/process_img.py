@@ -9,14 +9,8 @@ from utils import get_bosses as gb
 from utils import extractor as ex
 
 
-def read_image_pokemon(img_name):
-    img_path = "images/raids/pokemon/" + str(img_name)
-    img = cv.imread(img_path)
-    return img
-
-
-def read_image_egg(img_name):
-    img_path = "images/raids/eggs/" + str(img_name)
+def read_image(img_name):
+    img_path = "images/raids/" + str(img_name)
     img = cv.imread(img_path)
     return img
 

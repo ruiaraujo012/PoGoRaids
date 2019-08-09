@@ -16,11 +16,7 @@ def read_args():
     parser.add_argument('-i',
                         help='Name of screenshot with extension. Ex.: raid_1.jpg')
     parser.add_argument('-t',
-                        help='Test all OCR images', action='store_true')
-    parser.add_argument('-te',
-                        help='Test OCR egg images', action='store_true')
-    parser.add_argument('-tp',
-                        help='Test OCR pokemon images', action='store_true')
+                        help='Test OCR images', action='store_true')
     args = parser.parse_args()
 
     if args == None:
@@ -33,14 +29,14 @@ def main():
     args = read_args()
 
     img_name = args.i
-    test_ocr_eggs = args.te
+    test_ocr_eggs = args.t
 
     if test_ocr_eggs:
-        test_ocr.test_ocr_eggs()
+        test_ocr.test_ocr()
 
     if img_name != None:
         print("IMG NAME" + img_name)
-        img = pi.read_image_egg(img_name)
+        img = pi.read_image(img_name)
         extracted_info = pi.process_img(img)
 
         print("EXTRACTED INFO")
