@@ -1,6 +1,7 @@
 
 import pytesseract
 import re
+import datetime as dt
 import cv2 as cv
 import numpy as np
 from utils import color as co
@@ -309,6 +310,22 @@ def validate_hour_hh_mm_ss(text):
     return False
 
 
+def get_time(phone_time, raid_time):
+    if phone_time:
+        phone_time = dt.datetime.strptime(phone_time, '%H:%M')
+
+        raid_time = dt.datetime.strptime(raid_time, '%H:%M:%S')
+
+        delta = dt.timedelta(hours=raid_time.hour, minutes=raid_time.minute,
+                             seconds=raid_time.second)
+
+        time = (phone_time + delta).time().strftime("%H:%M:%S")
+    else:
+        time = None
+
+    return time
+
+
 def process_img(img):
 
     img_no_bottom = remove_bottom_bar(img)
@@ -341,4 +358,6 @@ def process_img(img):
             print(" Can't read pokemon name! ".center(40, '*'))
             print(''.center(40, '*'))
 
-    return phone_time, raid_time, did_egg_hatch, gym_name, raid_level, pokemon_name
+    raid_hour = get_time(phone_time, raid_time)
+
+    return phone_time, raid_time, did_egg_hatch, gym_name, raid_level, pokemon_name, raid_hour
