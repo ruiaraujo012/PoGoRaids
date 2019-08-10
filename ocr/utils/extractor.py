@@ -123,12 +123,33 @@ def extract_level(img):
 
 def extract_gym_name(img, coords):
     w, h, c = img.shape
-    img = img[coords[0]-coords[2]:coords[0] +
-              coords[2], coords[1]+coords[2]:w]
+    print(coords)
+    print(str(w*0.45))
+    print(w)
+    print(coords[1]+coords[2])
+    img_or = img
+    # img = img[coords[0]-coords[2]:coords[0] +
+    #           coords[2], coords[1]+coords[2]:w]
+
+    img = img[coords[0]-coords[2]+15:coords[0] +
+              coords[2] - 15, coords[1]+coords[2]:int(w*0.4)]
 
     img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
     ret, img = cv.threshold(img,
-                            205, 255, cv.THRESH_BINARY_INV)
+                            215, 255, cv.THRESH_BINARY_INV)
 
-    return pytesseract.image_to_string(
-        img, config='--psm 6')
+    img = cv.GaussianBlur(img, (3, 3), cv.BORDER_DEFAULT)
+
+    cv.imshow("img", img)
+    # cv.imshow("img2", img2)
+
+    cv.waitKey(0)
+    extracted_gym_name = pytesseract.image_to_string(
+        img, config='--psm 6', lang="por")
+
+    return clear_gym_name(extracted_gym_name)
+
+
+def clear_gym_name(gym_name):
+    gym_name = gym_name.replace("\n", " ").replace("(Q", "@")
+    return gym_name

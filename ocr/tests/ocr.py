@@ -8,7 +8,7 @@ f = open("tests.txt", "w")
 
 def test_ocr():
 
-    with open('data/test_eggs.json') as json_file:
+    with open('data/test_ocr.json') as json_file:
         imgs = json.load(json_file)
 
         for row in imgs:
@@ -26,7 +26,7 @@ def validate_data(name, phone_time, raid_time, did_egg_hatch, gym_name, level, p
 
     info = "=" * 20 + " " + name + " " + "=" * 20 + "\n"
 
-    if(data['gym_name'].strip() != gym_name.strip()):
+    if(data['gym_name'].strip().lower() != gym_name.strip().lower()):
         info += "Invalid gym name, expected: {}, result: {} \n".format(
             data['gym_name'], gym_name)
 
@@ -61,12 +61,12 @@ def validate_data(name, phone_time, raid_time, did_egg_hatch, gym_name, level, p
         info += "Invalid level, expected {}, result: {} \n".format(
             data['level'], level)
 
-    if(pokemon in data and data['pokemon'] != pokemon):
+    if(pokemon in data and data['pokemon'].lower() != pokemon.lower()):
         info += "Invalid pokemon, expected {}, result: {} \n".format(
             data['pokemon'], pokemon)
 
     if(len(info.split("\n")) > 1):
-        f.write(info)
+        f.write(info + "\n")
         print(info + "\n")
     else:
         success_message = "==> {} passed all tests \n".format(name)

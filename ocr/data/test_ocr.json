@@ -50,10 +50,11 @@
     },
     {
         "img": "7.jpg",
-        "gym_name": "Casa Da Ponte",
-        "mobile_time": "14:37",
-        "time_until_start": "0:41:03",
-        "level": 5
+        "gym_name": "Igreja da Estação",
+        "mobile_time": "16:20",
+        "time_until_start": "0:35:57",
+        "level": 5,
+        "pokemon" : "Mewtwo"
     },
     {
         "img": "8.jpg",
@@ -263,7 +264,7 @@
         "gym_name": "Chafariz de St. André",
         "mobile_time": "18:17",
         "time_until_finish": "0:43:20",
-        "level": 3,
+        "level": 4,
         "pokemon": "Dragonite"
     }
 ]
