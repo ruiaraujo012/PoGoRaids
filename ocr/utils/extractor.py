@@ -1,5 +1,6 @@
 import pytesseract
 import random
+import re
 import cv2 as cv
 import numpy as np
 from utils import process_img as pi
@@ -123,13 +124,6 @@ def extract_level(img):
 
 def extract_gym_name(img, coords):
     w, h, c = img.shape
-    print(coords)
-    print(str(w*0.45))
-    print(w)
-    print(coords[1]+coords[2])
-    img_or = img
-    # img = img[coords[0]-coords[2]:coords[0] +
-    #           coords[2], coords[1]+coords[2]:w]
 
     img = img[coords[0]-coords[2]+15:coords[0] +
               coords[2] - 15, coords[1]+coords[2]:int(w*0.4)]
@@ -140,10 +134,6 @@ def extract_gym_name(img, coords):
 
     img = cv.GaussianBlur(img, (3, 3), cv.BORDER_DEFAULT)
 
-    cv.imshow("img", img)
-    # cv.imshow("img2", img2)
-
-    cv.waitKey(0)
     extracted_gym_name = pytesseract.image_to_string(
         img, config='--psm 6', lang="por")
 
@@ -152,4 +142,8 @@ def extract_gym_name(img, coords):
 
 def clear_gym_name(gym_name):
     gym_name = gym_name.replace("\n", " ").replace("(Q", "@")
+    print('Gym_name : before: {}'.format(gym_name))
+    gym_name = re.sub('(?<!\w)[\.\|\?]', '', gym_name)
+    gym_name = re.sub('^[a-z]\s*', '', gym_name)
+    print('Gym_name : after resub: {}'.format(gym_name))
     return gym_name

@@ -311,7 +311,7 @@ def validate_hour_hh_mm_ss(text):
 
 
 def get_time(phone_time, raid_time):
-    if phone_time:
+    if phone_time and raid_time:
         phone_time = dt.datetime.strptime(phone_time, '%H:%M')
 
         raid_time = dt.datetime.strptime(raid_time, '%H:%M:%S')

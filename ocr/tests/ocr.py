@@ -13,7 +13,7 @@ def test_ocr():
 
         for row in imgs:
             img = pi.read_image(row['img'])
-            phone_time, raid_time, did_egg_hatch, gym_name, level, pokemon = pi.process_img(
+            phone_time, raid_time, did_egg_hatch, gym_name, level, pokemon, raid_hour = pi.process_img(
                 img)
             log.log_raid_data(row['img'], phone_time, raid_time,
                               did_egg_hatch, gym_name, level, pokemon)
@@ -65,7 +65,7 @@ def validate_data(name, phone_time, raid_time, did_egg_hatch, gym_name, level, p
         info += "Invalid pokemon, expected {}, result: {} \n".format(
             data['pokemon'], pokemon)
 
-    if(len(info.split("\n")) > 1):
+    if(len(info.split("\n")) > 2):
         f.write(info + "\n")
         print(info + "\n")
     else:
