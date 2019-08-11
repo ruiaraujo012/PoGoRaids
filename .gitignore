@@ -2,6 +2,7 @@
 __pycache__/
 __pycache__
 results.txt
+tests.txt
 
 # Vscode
 .vscode

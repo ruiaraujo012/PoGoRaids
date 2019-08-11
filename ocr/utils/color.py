@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import math
 
 # Algorithm for color similarity https://stackoverflow.com/questions/5392061/algorithm-to-check-similarity-of-colors
@@ -97,33 +96,6 @@ def arbitrary_similarity(color1, color2, val):
 
     delta = diff_between_rgb_colors(color1, color2)
 
-    # > 20/25 não é semelhante
     if delta < val:
         return True
     return False
-
-
-# def black_similarity(color):
-
-
-def tests():
-    c1 = [238, 123, 70]
-    c2 = [253, 115, 55]
-    c3 = [239, 131, 86]
-    c4 = [247, 125, 53]
-    c5 = [245, 123, 61]
-    c6 = [244, 219, 210]
-    c7 = [235, 199, 79]
-    c8 = [235, 110, 79]
-
-    print(similarity(c1, c2))
-    print(similarity(c1, c3))
-    print(similarity(c1, c4))
-    print(similarity(c1, c5))
-    print("\n\n")
-    print(similarity(c2, c3))
-    print(similarity(c3, c4))
-    print(similarity(c4, c5))
-    print(similarity(c1, c6))
-    print(similarity(c1, c7))
-    print(similarity(c1, c8))
