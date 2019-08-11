@@ -72,7 +72,7 @@ services:
         restart: always
 
         # TODO : Change on deploy
-        command: ["./wait-for-it.sh", "db_ocr_service:3306",  "--", "nodemon"]
+        # command: ["./wait-for-it.sh", "db_ocr_service:3306",  "--", "npm start"]
 
 networks:
     network_backend:
