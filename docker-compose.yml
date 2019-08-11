@@ -39,40 +39,40 @@ services:
         restart: always
         command: ["./wait-for-it.sh", "db_user_service:3306", "--", "nodemon"]
 
-# MS - GENERIC-SERVICE
-    db_generic_service: 
+# MS - OCR-SERVICE
+    db_ocr_service: 
         image: mysql:5.7.26
         environment:
-            MYSQL_DATABASE: db_generic_service
-            MYSQL_USER: db_generic_service
-            MYSQL_PASSWORD: db_generic_service
+            MYSQL_DATABASE: db_ocr_service
+            MYSQL_USER: db_ocr_service
+            MYSQL_PASSWORD: db_ocr_service
             MYSQL_ROOT_PASSWORD: 'random-root-password'
         volumes:
-            - ~/databases/db_generic_service/data:/var/lib/mysql
+            - ~/databases/db_ocr_service/data:/var/lib/mysql
         networks:
             - network_backend
 
-    generic_service:
-        build: ./microservices/generic-service
+    ocr_service:
+        build: ./microservices/ocr-service
         volumes:
-            - ./microservices/generic-service:/usr/src/app
+            - ./microservices/ocr-service:/usr/src/app
             - /usr/src/app/node_modules
         environment:
-            DB_USERNAME: db_generic_service
-            DB_PASSWORD: db_generic_service
-            DB_NAME: db_generic_service
-            DB_HOST: db_generic_service
-
-            MS_USERS: 'http://user_service:3000'
+            DB_USERNAME: db_ocr_service
+            DB_PASSWORD: db_ocr_service
+            DB_NAME: db_ocr_service
+            DB_HOST: db_ocr_service
 
         ports:
             - 3002:3000
         networks:
             - network_backend
         depends_on:
-            - db_generic_service
+            - db_ocr_service
         restart: always
-        command: ["./wait-for-it.sh", "db_generic_service:3306",  "--", "nodemon"]
+
+        # TODO : Change on deploy
+        command: ["./wait-for-it.sh", "db_ocr_service:3306",  "--", "nodemon"]
 
 networks:
     network_backend:
