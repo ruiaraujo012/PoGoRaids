@@ -1,8 +1,10 @@
 FROM ubuntu:latest
 
-# WORKDIR /home/app
+WORKDIR /usr/src/app
+
 RUN apt-get update
 RUN apt-get -y install curl gnupg
+RUN apt-get -y install libsm6 libxext6 libxrender-dev
 RUN curl -sL https://deb.nodesource.com/setup_11.x  | bash -
 RUN apt-get -y install nodejs
 RUN npm install -g nodemon
@@ -21,5 +23,5 @@ RUN npm install nodemon -g
 COPY . ./
 
 # Change to npm start for deploy
-CMD ["npm" , "start"]
+CMD ["nodemon"]
 
