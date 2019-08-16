@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
+import json
 import logging
 import datetime as dt
 from utils import process_img as pi
@@ -36,7 +37,21 @@ def main():
 
     if img_name is not None:
         img = pi.read_image(img_name)
-        extracted_info = pi.process_img(img)
+
+        phone_time, raid_time, did_egg_hatch, gym_name, raid_level, pokemon_name, raid_hour = pi.process_img(
+            img)
+
+        extracted_info = {
+            'gym_name': gym_name,
+            'raid_level': raid_level,
+            'raid_hour': raid_hour,
+            'pokemon': pokemon_name,
+            'did_egg_hatch': did_egg_hatch,
+            'phone_time': phone_time,
+            'raid_time': raid_time
+        }
+
+        print(json.dumps(extracted_info))
 
 
 main()

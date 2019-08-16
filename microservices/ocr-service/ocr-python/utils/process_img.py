@@ -4,6 +4,7 @@ import re
 import datetime as dt
 import cv2 as cv
 import numpy as np
+import json
 from utils import color as co
 from utils import name_ratio as nr
 from utils import get_bosses as gb
@@ -11,12 +12,8 @@ from utils import extractor as ex
 
 
 def read_image(img_name):
-    print(img_name)
     img_path = "./ocr-python/images/raids/" + str(img_name).strip()
     img = cv.imread(img_path)
-
-    print(img)
-
     return img
 
 
@@ -342,9 +339,8 @@ def process_img(img):
     raid_level = ex.extract_level(level_img)
 
     if raid_level == 0:
-        print(' Error! '.center(40, '*'))
-        print(" Can't read raid level! ".center(40, '*'))
-        print(''.center(40, '*'))
+        print(json.dumps(
+            {'error': True, 'message': "Can't extract raid level"}))
 
     coords = detect_circles(img)
 
@@ -358,9 +354,8 @@ def process_img(img):
         pokemon_name = find_boss_name(croped_img, raid_level)
 
         if pokemon_name == None:
-            print(' Error! '.center(40, '*'))
-            print(" Can't read pokemon name! ".center(40, '*'))
-            print(''.center(40, '*'))
+            print(json.dumps(
+                {'error': True, 'message': "Can't extract pokemon name"}))
 
     raid_hour = get_time(phone_time, raid_time)
 

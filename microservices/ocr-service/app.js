@@ -3,11 +3,13 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-
-const indexRouter = require('./routes/index');
-const betRouter = require('./routes/bets');
+const axios = require('axios');
+const ocrRouter = require('./routes/ocr');
 
 const app = express();
+
+// Testing
+const ocrController = require('./controllers/ocr')
 
 require('dotenv').config();
 
@@ -23,7 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/bet', betRouter);
+app.use('/', ocrRouter);
+
 
 module.exports = app;

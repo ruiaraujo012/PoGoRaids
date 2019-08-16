@@ -3,6 +3,7 @@
 import argparse
 import logging
 import datetime as dt
+import json
 from utils import process_img as pi
 from utils import extractor as ex
 from tests import ocr as test_ocr
@@ -33,13 +34,27 @@ def main():
     if test_ocr_eggs:
         test_ocr.test_ocr()
 
+    print("This is a test")
+
     if img_name is not None:
-        print("IMG NAME" + img_name)
         img = pi.read_image(img_name)
         extracted_info = pi.process_img(img)
 
-        print("EXTRACTED INFO")
+        print("Extracted info")
         print(extracted_info)
+
+        extracted_info = {
+            'gym_name': extracted_info.gym_name,
+            'raid_level': extracted_info.raid_level,
+            'raid_hour': extracted_info.raid_hour,
+            'pokemon': extracted_info.pokemon_name,
+            'did_egg_hatch': extracted_info.did_egg_hatch,
+            'phone_time': extracted_info.phone_time,
+            'raid_time': extracted_info.raid_time
+        }
+
+        print("This is a test")
+        print(json.dumps(extracted_info))
 
 
 main()
