@@ -7,7 +7,6 @@ from utils import process_img as pi
 
 
 def scan_for_current_time(img):
-    # Verificar 7.8.9 - aparecem a branco
     h, w, c = img.shape
     vscale = h/960
     cropped = img[0:min(int(45*vscale), 65), 0:w]
