@@ -8,9 +8,6 @@ const ocrRouter = require('./routes/ocr');
 
 const app = express();
 
-// Testing
-const ocrController = require('./controllers/ocr')
-
 require('dotenv').config();
 
 app.use(cors())
@@ -20,7 +17,7 @@ app.options('*', cors())
 global.MS_USERS = process.env.MS_USERS || ''
 
 app.use(logger('dev'));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));

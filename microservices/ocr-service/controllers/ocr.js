@@ -6,7 +6,7 @@ const Ocr = module.exports;
 Ocr.extractInfoFromRaidImage = async (img) => {
 
     let pyshell = new PythonShell('./ocr-python/main.py', {
-        args: ['-i', img],
+        args: ['-i', `./images/${img}`],
         mode: 'json'
     });
 

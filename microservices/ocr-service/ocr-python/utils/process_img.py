@@ -12,8 +12,11 @@ from utils import extractor as ex
 
 
 def read_image(img_name):
-    img_path = "./ocr-python/images/raids/" + str(img_name).strip()
+    img_path = str(img_name).strip()
+    # print("IMG PATH " + img_path)
     img = cv.imread(img_path)
+    # print("Printing loaded image:")
+    # print(img)
     return img
 
 
