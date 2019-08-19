@@ -38,6 +38,7 @@ services:
             - db_user_service
         restart: always
         command: ["./wait-for-it.sh", "db_user_service:3306", "--", "nodemon"]
+        
 
 # MS - OCR-SERVICE
     db_ocr_service: 
@@ -73,6 +74,40 @@ services:
 
         # TODO : Change on deploy
         # command: ["./wait-for-it.sh", "db_ocr_service:3306",  "--", "npm start"]
+
+# MS - MAIN_SERVICE
+    db_main_service: 
+        image: mysql:5.7.26
+        environment:
+            MYSQL_DATABASE: db_main_service
+            MYSQL_USER: db_main_service
+            MYSQL_PASSWORD: db_main_service
+            MYSQL_ROOT_PASSWORD: 'random-root-password'
+        volumes:
+            - ~/databases/db_main_service/data:/var/lib/mysql
+        networks:
+            - network_backend
+
+    main_service:
+        build: ./microservices/main-service
+        volumes:
+            - ./microservices/main-service:/usr/src/app
+            - /usr/src/app/node_modules
+        environment:
+            DB_USERNAME: db_main_service
+            DB_PASSWORD: db_main_service
+            DB_NAME: db_main_service
+            DB_HOST: db_main_service
+
+            # MS_GENERIC_SERVICE: 'http://generic_service:3000'
+        ports:
+            - 3003:3000
+        networks:
+            - network_backend
+        depends_on:
+            - db_main_service
+        restart: always
+        command: ["./wait-for-it.sh", "db_main_service:3306", "--", "nodemon"]
 
 networks:
     network_backend:
