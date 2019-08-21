@@ -55,7 +55,7 @@ router.post('/login', async (req, res, next) => {
                 if (err) return next(err)
 
                 const userInfoInToken = {
-                    oid: user.oid,
+                    id: user.id,
                     username: user.username
                 }
 

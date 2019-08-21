@@ -5,9 +5,9 @@ services:
     db_user_service: 
         image: mysql:5.7.26
         environment:
-            MYSQL_DATABASE: user_service
-            MYSQL_USER: user_service
-            MYSQL_PASSWORD: user_service
+            MYSQL_DATABASE: db_user_service
+            MYSQL_USER: db_user_service
+            MYSQL_PASSWORD: db_user_service
             MYSQL_ROOT_PASSWORD: 'random-root-password'
         volumes:
             - ~/databases/db_user_service/data:/var/lib/mysql
@@ -20,16 +20,15 @@ services:
             - ./microservices/user-service:/usr/src/app
             - /usr/src/app/node_modules
         environment:
-            DB_USERNAME: user_service
-            DB_PASSWORD: user_service
-            DB_NAME: user_service
+            DB_USERNAME: db_user_service
+            DB_PASSWORD: db_user_service
+            DB_NAME: db_user_service
             DB_HOST: db_user_service
 
             FILE_STORE_SECRET_KEY: 'secret'
             PASSPORT_SECRET_KEY: 'secret'
             JWT_SECRET_KEY: 'secret'
     
-            MS_GENERIC_SERVICE: 'http://generic_service:3000'
         ports:
             - 3001:3000
         networks:

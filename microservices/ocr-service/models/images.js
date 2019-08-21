@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const db = require('../database/db');
 
 const Images = db.sequelize.define('images', {
-    oid: {
+    id: {
         type: Sequelize.INTEGER(11),
         allowNull: false,
         primaryKey: true,
@@ -14,13 +14,6 @@ const Images = db.sequelize.define('images', {
     data: {
         type: Sequelize.BLOB('long')
     }
-    // event_oid: {
-    //   type: Sequelize.INTEGER(11),
-    //   allowNull: true,
-    //   references: {
-    //     model: 'event',
-    //     key: 'event_oid'
-    //   }
 }, {
         tableName: 'images'
     });
