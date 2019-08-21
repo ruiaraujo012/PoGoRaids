@@ -12,8 +12,8 @@ import requests
 
 DOMAIN = 'https://intel.ingress.com'
 COOKIES = {
-    'SACSID': '~AJKiYcFaWxPMhGe5JY6CTcdtAUvFyGeMwdQGtYgovR2p8Bc5f0cB_q4wCSYuMtnhjq_5TJft8JFFHFkTecZFIBi2bdxqBr8UPBCO0woTIhGdleKRC7ZIFmBrL45K2m72S93MPSFqHjD0IsCDM7lsXNdEaNvk8q1owFfcFBNMcWVKS0CniqMFDpkY7GMNEJu7RRb6SdS0ZSNItkpfP50axvuUVNah2jnO-vnj32ZyVStDEDe0HTO62p4S3QM4L63RcQ7MVOGeZWkFxoVoUh2QxKAGUX5x-6WjWZNoWHIVydIpp46Rdf_f5I_0XAEcC_pxZh1xsO8ISOPK',
-    'csrftoken': 'OcCsZfF6k7d7Cmqt5UWNr58TJAXfQlYH'
+    'SACSID': '~AJKiYcFsLiTFazzirvnhgKUFk-5Q1HdDpQ90jAbfy3rrPvp8SxgObkxSIDPLTf-RA6SuR5V8ip6bcEC5Np79Bq3fBSZeGhF1lUFqV8yxSLmqqwT7AyJZrfi2S49kKUDYhwnL--b4xDKPisjyc36BLsPmdFhUSg0L5via9B8SMp-0iNQDtOSywEDYYLeEZc1_tpTYL4JDIUBrBjzAz2wkEkU4_IyzLRO8W6sf0We3--6N2kU2UIh-STBSUt3LSy4dqEDCWtnflynk_UkGRpO5Np3E2qRtIdzSkhjFRtwAVb8t0L_3rEuCbJ3vDYxpqhjMNw5dx6EWVLDH',
+    'csrftoken': '3dNeEzDIA3DUkUsXfcDpFSJP6k6acuHj'
 }
 
 class Pokestop(object):
@@ -315,7 +315,7 @@ def main2(latitude=None, longitude=None, guid=None, minimum=0, maximum=1000, lim
     args['maximum'] = maximum
     args['limit'] = limit
 
-    print(args)
+    # print(args)
 
     if not guid and (not latitude or not longitude):
         print(' Error! '.center(40, '*'))
@@ -326,10 +326,10 @@ def main2(latitude=None, longitude=None, guid=None, minimum=0, maximum=1000, lim
     pokestop = Pokestop(args)
 
     if guid:
-        print(pokestop.entity(guid))
+        #print(pokestop.entity(guid))
         return pokestop.entity(guid)
     else:
-        print(pokestop.entities())
+        #print(pokestop.entities())
         return pokestop.entities()
 
 

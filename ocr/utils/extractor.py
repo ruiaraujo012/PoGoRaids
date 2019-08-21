@@ -141,8 +141,8 @@ def extract_gym_name(img, coords):
 
 def clear_gym_name(gym_name):
     gym_name = gym_name.replace("\n", " ").replace("(Q", "@")
-    print('Gym_name : before: {}'.format(gym_name))
+    # print('Gym_name : before: {}'.format(gym_name))
     gym_name = re.sub('(?<!\w)[\.\|\?]', '', gym_name)
     gym_name = re.sub('^[a-z]\s*', '', gym_name)
-    print('Gym_name : after resub: {}'.format(gym_name))
+    # print('Gym_name : after resub: {}'.format(gym_name))
     return gym_name

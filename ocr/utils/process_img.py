@@ -326,7 +326,7 @@ def get_time(phone_time, raid_time):
     return time
 
 
-def process_img(img):
+def process_img(img, portals):
 
     img_no_bottom = remove_bottom_bar(img)
     croped_img = crop_resize_img(img_no_bottom)
@@ -347,8 +347,23 @@ def process_img(img):
     pokemon_name = None
 
     if coords:
-        # TODO: limpar o texto extraido do nome do ginasio
         gym_name = ex.extract_gym_name(img, coords)
+
+        if portals:
+            max_ratio = 0
+
+            for portal in portals:
+                ratio = nr.levenshtein_ratio_and_distance(
+                    portal['name'].lower(), gym_name.lower(), ratio_calc=True)
+
+                if ratio > max_ratio:
+                    max_ratio = ratio
+                    best_match = portal['name']
+
+            if max_ratio >= 0.8:
+                gym_name = best_match
+            else:
+                print('Best gym name match: {}'.format(best_match))
 
     if did_egg_hatch:
         pokemon_name = find_boss_name(croped_img, raid_level)

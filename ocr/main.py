@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import json
 from utils import process_img as pi
 from tests import ocr as test_ocr
 from packages import pokestop as pk
@@ -34,12 +35,6 @@ def main():
     """ high level support for doing this and that. """
     args = read_args()
 
-    if args.guid:
-        portals = pk.main2(guid=args.guid)
-    elif args.latitude and args.longitude:
-        portals = pk.main2(latitude=args.latitude,
-                           longitude=args.longitude)
-
     img_name = args.i
     test_ocr_eggs = args.t
 
@@ -47,12 +42,20 @@ def main():
         test_ocr.test_ocr()
 
     if img_name is not None:
-        print("IMG NAME" + img_name)
+        print("IMG NAME {}".format(img_name))
         img = pi.read_image(img_name)
-        extracted_info = pi.process_img(img)
 
-        print("EXTRACTED INFO")
-        print(extracted_info)
+        if args.guid:
+            portals = pk.main2(guid=args.guid)
+            portals = json.loads(portals)
+        elif args.latitude and args.longitude:
+            portals = pk.main2(latitude=args.latitude,
+                               longitude=args.longitude)
+            portals = json.loads(portals)
+
+        extracted_info = pi.process_img(img, portals)
+
+        print("EXTRACTED INFO: \n{}".format(extracted_info))
 
 
 main()
