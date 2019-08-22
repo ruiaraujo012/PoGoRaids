@@ -11,7 +11,7 @@ logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
 def read_args():
-    ''' high level support for doing this and that. '''
+    """ Get args that is needed in script. """
     parser = argparse.ArgumentParser(description='Info to run main:')
     parser.add_argument('-i',
                         help='Name of screenshot with extension. Ex.: raid_1.jpg')
@@ -32,7 +32,7 @@ def read_args():
 
 
 def main():
-    """ high level support for doing this and that. """
+    """ Main function. """
     args = read_args()
 
     img_name = args.i
