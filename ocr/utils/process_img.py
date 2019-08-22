@@ -7,6 +7,7 @@ from utils import color as co
 from utils import get_bosses as gb
 from utils import extractor as ex
 from packages import name_ratio as nr
+from fuzzywuzzy import fuzz
 
 
 def read_image(img_name):
@@ -246,8 +247,7 @@ def find_boss_name(img, raid_level):
     max_ratio = 0
 
     for boss_name in bosses:
-        ratio = nr.levenshtein_ratio_and_distance(
-            boss_name_found.lower(), boss_name.lower(), ratio_calc=True)
+        ratio = fuzz.ratio(boss_name_found.lower(), boss_name.lower())
 
         if ratio > max_ratio:
             max_ratio = ratio
@@ -337,8 +337,7 @@ def process_img(img, portals):
             max_ratio = 0
 
             for portal in portals:
-                ratio = nr.levenshtein_ratio_and_distance(
-                    portal['name'].lower(), gym_name.lower(), ratio_calc=True)
+                ratio = fuzz.ratio(portal['name'].lower(), gym_name.lower())
 
                 if ratio > max_ratio:
                     max_ratio = ratio

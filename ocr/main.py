@@ -45,6 +45,8 @@ def main():
         print("IMG NAME {}".format(img_name))
         img = pi.read_image(img_name)
 
+        portals = None
+
         if args.guid:
             portals = pk.main2(guid=args.guid)
             portals = json.loads(portals)
