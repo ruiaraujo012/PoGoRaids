@@ -16,6 +16,7 @@ COOKIES = {
     'csrftoken': '3dNeEzDIA3DUkUsXfcDpFSJP6k6acuHj'
 }
 
+
 class Pokestop(object):
     """Pokestop class"""
 
@@ -96,7 +97,7 @@ class Pokestop(object):
         """Assembles the HTTP headers"""
 
         return {
-            'accept-encoding' :'gzip, deflate',
+            'accept-encoding': 'gzip, deflate',
             'content-type': 'application/json; charset=UTF-8',
             'cookie': "; ".join([str(x) + "=" + str(y) for x, y in self.cookies.items()]),
             'origin': DOMAIN,
@@ -111,7 +112,8 @@ class Pokestop(object):
         rlat = math.radians(lat)
         tilecount = 32E3
         xtile = int((lng + 180.0) / 360.0 * tilecount)
-        ytile = int((1.0 - math.log(math.tan(rlat) + (1 / math.cos(rlat))) / math.pi) / 2.0 * tilecount)
+        ytile = int((1.0 - math.log(math.tan(rlat) +
+                                    (1 / math.cos(rlat))) / math.pi) / 2.0 * tilecount)
 
         return xtile, ytile
 
@@ -119,7 +121,8 @@ class Pokestop(object):
         """Performs an HTTP post and returns the result"""
 
         content['v'] = self.version
-        request = requests.post(url, data=json.dumps(content), headers=self.headers)
+        request = requests.post(url, data=json.dumps(
+            content), headers=self.headers)
 
         return request.json()['result']
 
@@ -151,8 +154,10 @@ class Pokestop(object):
         lat_end = math.radians(end_lat)
         lat_diff = math.radians(end_lat - start_lat)
         lng_diff = math.radians(end_lng - start_lng)
-        accumulation = (math.sin(lat_diff / 2) * math.sin(lat_diff / 2)) + (math.cos(lat_start) * math.cos(lat_end) * math.sin(lng_diff / 2) * math.sin(lng_diff / 2))
-        result = 2 * math.atan2(math.sqrt(accumulation), math.sqrt(1 - accumulation))
+        accumulation = (math.sin(lat_diff / 2) * math.sin(lat_diff / 2)) + (math.cos(
+            lat_start) * math.cos(lat_end) * math.sin(lng_diff / 2) * math.sin(lng_diff / 2))
+        result = 2 * math.atan2(math.sqrt(accumulation),
+                                math.sqrt(1 - accumulation))
 
         return int(math.floor(radius * result))
 
@@ -160,7 +165,8 @@ class Pokestop(object):
         """Calculates the bearing between two coordinates"""
 
         y_var = math.sin(end_lng - start_lng) * math.cos(end_lat)
-        x_var = (math.cos(start_lat) * math.sin(end_lat)) - (math.sin(start_lat) * math.cos(end_lat) * math.cos(end_lng - start_lng))
+        x_var = (math.cos(start_lat) * math.sin(end_lat)) - (math.sin(start_lat)
+                                                             * math.cos(end_lat) * math.cos(end_lng - start_lng))
 
         return int(math.floor(360 - ((math.degrees(math.atan2(y_var, x_var)) + 360) % 360)))
 
@@ -191,10 +197,14 @@ class Pokestop(object):
     def entities(self):
         """Collects pokestops"""
 
-        lat = math.floor(float(self.cookies['ingress.intelmap.lat']) * 1E6) / 1E6
-        lng = math.floor(float(self.cookies['ingress.intelmap.lng']) * 1E6) / 1E6
-        minxtile, maxytile = self.tile(((lng * 1E6) - 100) / 1E6, ((lat * 1E6) - 100) / 1E6)
-        maxxtile, minytile = self.tile(((lng * 1E6) + 100) / 1E6, ((lat * 1E6) + 100) / 1E6)
+        lat = math.floor(
+            float(self.cookies['ingress.intelmap.lat']) * 1E6) / 1E6
+        lng = math.floor(
+            float(self.cookies['ingress.intelmap.lng']) * 1E6) / 1E6
+        minxtile, maxytile = self.tile(
+            ((lng * 1E6) - 100) / 1E6, ((lat * 1E6) - 100) / 1E6)
+        maxxtile, minytile = self.tile(
+            ((lng * 1E6) + 100) / 1E6, ((lat * 1E6) + 100) / 1E6)
         output = []
 
         if 'minimum' not in self.args or not self.args['minimum']:
@@ -264,7 +274,7 @@ class Pokestop(object):
             reverse=self.args['order'] == 'DESC'
         )
 
-        output = output[self.args['offset']:self.args['offset'] + self.args['limit']]
+        output = output[self.args['offset']                        :self.args['offset'] + self.args['limit']]
 
         return json.dumps(output, indent=4)
 
@@ -283,8 +293,10 @@ class Pokestop(object):
         compass = None
 
         if 'ingress.intelmap.lat' in self.cookies and 'ingress.intelmap.lng' in self.cookies:
-            lat = math.floor(float(self.cookies['ingress.intelmap.lat']) * 1E6) / 1E6
-            lng = math.floor(float(self.cookies['ingress.intelmap.lng']) * 1E6) / 1E6
+            lat = math.floor(
+                float(self.cookies['ingress.intelmap.lat']) * 1E6) / 1E6
+            lng = math.floor(
+                float(self.cookies['ingress.intelmap.lng']) * 1E6) / 1E6
 
             distance = self.distance(lat, lng, latitude, longitude)
             bearing = self.bearing(lat, lng, latitude, longitude)
@@ -303,6 +315,7 @@ class Pokestop(object):
 
         return json.dumps(output, indent=4)
 
+
 def main2(latitude=None, longitude=None, guid=None, minimum=0, maximum=1000, limit=1000):
     """Main function to run from OCR"""
 
@@ -315,8 +328,6 @@ def main2(latitude=None, longitude=None, guid=None, minimum=0, maximum=1000, lim
     args['maximum'] = maximum
     args['limit'] = limit
 
-    # print(args)
-
     if not guid and (not latitude or not longitude):
         print(' Error! '.center(40, '*'))
         print(" guid, lat or long not found ".center(40, '*'))
@@ -326,10 +337,8 @@ def main2(latitude=None, longitude=None, guid=None, minimum=0, maximum=1000, lim
     pokestop = Pokestop(args)
 
     if guid:
-        #print(pokestop.entity(guid))
         return pokestop.entity(guid)
     else:
-        #print(pokestop.entities())
         return pokestop.entities()
 
 
@@ -339,20 +348,31 @@ def main():
     parser = argparse.ArgumentParser(
         prog='python pokestop.py',
         description='Find nearby Pokéstops',
-        formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=27)
+        formatter_class=lambda prog: argparse.HelpFormatter(
+            prog, max_help_position=27)
     )
 
-    parser.add_argument('--latitude', dest='latitude', type=str, help='Coordinate latitude')
-    parser.add_argument('--longitude', dest='longitude', type=str, help='Coordinate longitude')
+    parser.add_argument('--latitude', dest='latitude',
+                        type=str, help='Coordinate latitude')
+    parser.add_argument('--longitude', dest='longitude',
+                        type=str, help='Coordinate longitude')
     parser.add_argument('--guid', dest='guid', type=str, help='Pokéstop ID')
-    parser.add_argument('--min', dest='minimum', type=int, default=0, help='Minimum distance (meters)')
-    parser.add_argument('--max', dest='maximum', type=int, default=1000, help='Maximum distance (meters)')
-    parser.add_argument('--order', dest='order', type=str, default='ASC', choices=['ASC', 'DESC'], help='Results order')
-    parser.add_argument('--limit', dest='limit', type=int, default=1000, help='Results limit')
-    parser.add_argument('--offset', dest='offset', type=int, default=0, help='Results offset')
-    parser.add_argument('--SACSID', dest='SACSID', type=str, help='SACSID cookie')
-    parser.add_argument('--csrftoken', dest='csrftoken', type=str, help='csrftoken cookie')
-    parser.add_argument('--save', dest='save', action='store_true', help='Save cookies to ~/.pokestop')
+    parser.add_argument('--min', dest='minimum', type=int,
+                        default=0, help='Minimum distance (meters)')
+    parser.add_argument('--max', dest='maximum', type=int,
+                        default=1000, help='Maximum distance (meters)')
+    parser.add_argument('--order', dest='order', type=str,
+                        default='ASC', choices=['ASC', 'DESC'], help='Results order')
+    parser.add_argument('--limit', dest='limit', type=int,
+                        default=1000, help='Results limit')
+    parser.add_argument('--offset', dest='offset', type=int,
+                        default=0, help='Results offset')
+    parser.add_argument('--SACSID', dest='SACSID',
+                        type=str, help='SACSID cookie')
+    parser.add_argument('--csrftoken', dest='csrftoken',
+                        type=str, help='csrftoken cookie')
+    parser.add_argument('--save', dest='save',
+                        action='store_true', help='Save cookies to ~/.pokestop')
 
     args = parser.parse_args()
 
@@ -366,6 +386,7 @@ def main():
         print(pokestop.entity(args.guid))
     else:
         print(pokestop.entities())
+
 
 if __name__ == '__main__':
     main()

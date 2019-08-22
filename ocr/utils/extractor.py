@@ -1,6 +1,6 @@
-import pytesseract
-import random
 import re
+import random
+import pytesseract
 import cv2 as cv
 import numpy as np
 from utils import process_img as pi
@@ -46,11 +46,7 @@ def scan_raid_time(img):
 
 
 def extract_level(img):
-    # img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    # img_gray = cv.GaussianBlur(img_gray, (7, 7), cv.BORDER_DEFAULT)
     edges = cv.Canny(img, 50, 200)
-    # cv.imshow('edge', edges)
-    # cv.waitKey(0)
 
     template = cv.imread('images/raid_icon.png', 0)
     template = cv.resize(template, None, fx=1.4, fy=1.4,
@@ -58,17 +54,11 @@ def extract_level(img):
 
     edges_t = cv.Canny(template, 50, 200)
 
-    # cv.imshow('edge2', edges_t)
-    # cv.waitKey(0)
-
-    # template = cv.GaussianBlur(template, (1, 1), cv.BORDER_DEFAULT)
-
     loc = [[]]
     max_level = 0
     while(True):
         level = 0
         w, h = edges_t.shape[::-1]
-        # w, h = edges_t.shape[:2]
 
         if w <= 50 and h <= 50:
             break
@@ -81,13 +71,6 @@ def extract_level(img):
         g = random.randint(0, 255)
         b = random.randint(0, 255)
 
-        # for pt in zip(*loc[::-1]):
-        #     cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (r, g, b), 2)
-        #     cv.imshow('rec', img)
-
-        # cv.waitKey(0)
-
-        # [187, 188, 221, 222, 256, 290, 324, 325])
         x_points = loc[1]
         x_points.sort()
 
@@ -115,9 +98,6 @@ def extract_level(img):
         edges_t = cv.resize(edges_t, None, fx=0.95,
                             fy=0.95, interpolation=cv.INTER_CUBIC)
 
-        # cv.imshow('edge2', edges_t)
-        # cv.waitKey(0)
-
     return max_level
 
 
@@ -141,8 +121,7 @@ def extract_gym_name(img, coords):
 
 def clear_gym_name(gym_name):
     gym_name = gym_name.replace("\n", " ").replace("(Q", "@")
-    # print('Gym_name : before: {}'.format(gym_name))
     gym_name = re.sub('(?<!\w)[\.\|\?]', '', gym_name)
     gym_name = re.sub('^[a-z]\s*', '', gym_name)
-    # print('Gym_name : after resub: {}'.format(gym_name))
+
     return gym_name

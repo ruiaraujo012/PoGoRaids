@@ -1,13 +1,12 @@
-
-import pytesseract
 import re
 import datetime as dt
+import pytesseract
 import cv2 as cv
 import numpy as np
 from utils import color as co
-from utils import name_ratio as nr
 from utils import get_bosses as gb
 from utils import extractor as ex
+from packages import name_ratio as nr
 
 
 def read_image(img_name):
@@ -50,9 +49,6 @@ def crop_raid_level(img, raid_hatched):
     else:
         crop_img = img[int(h * 0.4):int(h * 0.55),
                        int(w * 0.25):int(w * 0.75)]
-
-    # cv.imshow('c', crop_img)
-    # cv.waitKey(0)
 
     return crop_img
 
@@ -127,7 +123,6 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
     vscale = h/960
     hscale = w/500
 
-    # y,x
     init_x = int(w * start[1])
     init_y = int(h * start[0])
 
@@ -167,7 +162,6 @@ def section_by_color(img, color_goal, start, end, block_height, threshold_type, 
             if threshold_type == 0:
                 text = threshold_binary_inv(zoomed, 200, regex)
             elif threshold_type == 1:
-                # thresholds = [180, 190, 200, 210, 215, 100, 125, 150, 175]
                 text = try_multiple_thresholds_ocr(zoomed, thresholds, regex)
 
             if text:
@@ -226,20 +220,10 @@ def detect_circles(img):
         min_y = 9999
         # loop over the (x, y) coordinates and radius of the circles
         for (x, y, r) in circles:
-            # draw the circle in the output image, then draw a rectangle
-            # corresponding to the center of the circle
-            cv.circle(output, (x, y), r, (0, 255, 0), 4)
-            cv.rectangle(output, (x - 5, y - 5),
-                         (x + 5, y + 5), (0, 128, 255), -1)
-
             if x < min_x and y < min_y:
                 min_x = x
                 min_y = y
                 image_circle = (min_y, min_x, r)
-
-        # show the output image
-        # cv.imshow("output", np.hstack([img, output]))
-        # cv.waitKey(0)
 
     return image_circle
 
