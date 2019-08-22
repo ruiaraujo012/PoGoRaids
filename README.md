@@ -74,9 +74,15 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
--   **Billie Thompson** - _Initial work_ - [PurpleBooth](https://github.com/PurpleBooth)
+-   **Miguel Brito** - _Initial work_ - [miguelfbrito](https://github.com/miguelfbrito)
+-   **Rui Araújo** - _Initial work_ - [ruiaraujo012](https://github.com/ruiaraujo012)
+-   **Leandro Fernandes** - _Team support_ - [LeandroFernandes5](https://github.com/LeandroFernandes5)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
+OR
+
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file who participated in this project.
 
 ## License
 
