@@ -1,96 +1,61 @@
 #!/usr/bin/python3
 
-import pytesseract
-import sys
-import cv2 as cv
-import color
-import re
-import numpy as np
+import argparse
 import logging
-import text_validation
-import img_process
-
-from PIL import Image
-
-# TODO : adapt coordinates to scales
-
-# NOTE : zoom in (cv.resize) parece ajudar em várias situacoes
-# NOTE : teste a vários thresholds será menos eficiente mas muito mais consistente para diferentes cores, para zonas consistentes não vale a pena realizar esta operação ou então limitá-la a poucos testes
+import json
+from utils import process_img as pi
+from tests import ocr as test_ocr
+from packages import pokestop as pk
 
 logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
-def percorrer_todas_raids():
-    total_raids = 5
+def read_args():
+    ''' high level support for doing this and that. '''
+    parser = argparse.ArgumentParser(description='Info to run main:')
+    parser.add_argument('-i',
+                        help='Name of screenshot with extension. Ex.: raid_1.jpg')
+    parser.add_argument('-t',
+                        help='Test OCR images', action='store_true')
+    parser.add_argument('-lat', dest='latitude',
+                        help='Latitude for portals request')
+    parser.add_argument('-lon', dest='longitude',
+                        help='Longitude for portals request')
+    parser.add_argument('-guid', dest='guid',
+                        help='Portal id to get information')
+    args = parser.parse_args()
 
-    for i in range(1, total_raids):
-        file_name = "raids/raid_" + str(i) + ".jpg"
-        extract(file_name)
+    if args is None:
+        print('Error! \nPlease use -h to see help')
 
-
-def extract(img_path):
-    img = cv.imread(img_path)
-
-    # Convert image to grayscale
-    # gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    # Binary conversion
-    # ret, thresh1 = cv.threshold(img, 185, 255, cv.THRESH_BINARY)
-    # cv.imshow("threshold", thresh1)
-    # text = pytesseract.image_to_string(thresh1)
-
-    h, w, c = img.shape
-
-    print("\n\n::::::::" + img_path + " :::::::: ")
-    print("- Scale ("+str(w) + ","+str(h)+"): " + str(w/h))
-
-    phone_time = scan_for_current_time(img)
-    time_until_start = scan_for_time_until_start(img)
-
-    print("Phone time:       {}".format(phone_time))
-    print("Time until start: {}".format(time_until_start))
-    print("\n\n\n")
-
-
-def scan_for_current_time(img):
-
-    # Verificar 7.8.9 - aparecem a branco
-    h, w, c = img.shape
-    cropped = img[0:45, 0:w]
-    gray = cv.cvtColor(cropped, cv.COLOR_BGR2GRAY)
-    zoomed = img_process.zoom_img(gray, 2, 2)
-
-    ret, thresh = cv.threshold(zoomed, 50, 255, cv.THRESH_BINARY_INV)
-
-    # TODO : reajustar estes valores
-    thresholds = [10, 25, 50, 100, 125, 150, 175, 200]
-    extracted_text = img_process.try_multiple_thresholds_ocr(
-        zoomed, thresholds, text_validation.validate_hour_hh_mm)
-
-    return extracted_text
-    print("Extracted text {}".format(extracted_text))
-
-
-def scan_for_time_until_start(img):
-
-    orange = [243, 121, 53]
-    time_until_start = img_process.section_by_color(img, orange,  [0.5, 0.65], [0.8, 0.99], 33, 0, [
-    ], regex=text_validation.validate_hour_hh_mm_ss)
-
-    if not time_until_start:
-        print("Testing rosa")
-        pink = [243, 136, 142]
-        time_until_start = img_process.section_by_color(img, pink,  [0.2, 0.2], [0.5, 0.85], 45, 0, [
-        ], pixels_quantity=150, regex=text_validation.validate_hour_hh_mm_ss)
-
-    # Testar para o ROSA antes do hatch
-
-    return time_until_start
+    return(args)
 
 
 def main():
+    """ high level support for doing this and that. """
+    args = read_args()
 
-    percorrer_todas_raids()
-    cv.destroyAllWindows()
+    img_name = args.i
+    test_ocr_eggs = args.t
+
+    if test_ocr_eggs:
+        test_ocr.test_ocr()
+
+    if img_name is not None:
+        print("IMG NAME {}".format(img_name))
+        img = pi.read_image(img_name)
+
+        if args.guid:
+            portals = pk.main2(guid=args.guid)
+            portals = json.loads(portals)
+        elif args.latitude and args.longitude:
+            portals = pk.main2(latitude=args.latitude,
+                               longitude=args.longitude)
+            portals = json.loads(portals)
+
+        extracted_info = pi.process_img(img, portals)
+
+        print("EXTRACTED INFO: \n{}".format(extracted_info))
 
 
 main()
