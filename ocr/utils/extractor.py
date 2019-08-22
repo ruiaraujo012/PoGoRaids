@@ -52,7 +52,7 @@ def extract_level(img):
     # cv.imshow('edge', edges)
     # cv.waitKey(0)
 
-    template = cv.imread('images/unknown.png', 0)
+    template = cv.imread('images/raid_icon.png', 0)
     template = cv.resize(template, None, fx=1.4, fy=1.4,
                          interpolation=cv.INTER_CUBIC)
 
