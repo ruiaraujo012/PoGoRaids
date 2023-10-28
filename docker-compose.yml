@@ -3,7 +3,7 @@ services:
 
 # MS - USER_SERVICE
     db_user_service: 
-        image: mysql:5.7.26
+        image: mysql:5.7.44
         environment:
             MYSQL_DATABASE: user_service
             MYSQL_USER: user_service
@@ -41,7 +41,7 @@ services:
 
 # MS - GENERIC-SERVICE
     db_generic_service: 
-        image: mysql:5.7.26
+        image: mysql:5.7.44
         environment:
             MYSQL_DATABASE: db_generic_service
             MYSQL_USER: db_generic_service
